@@ -1,15 +1,15 @@
 
 public class SudokuGrid {
     private int[][] grid;
-    private int size;
+    private int dimention;
 
-    public SudokuGrid(int size){
-        grid = new int[size][size];
-        this.size = size;
+    public SudokuGrid(int dimention){
+        grid = new int[dimention][dimention];
+        this.dimention = dimention;
     }
 
-    public int getSize(){
-        return size;
+    public int getDimention(){
+        return dimention;
     }
 
     public int[][] getGrid() {

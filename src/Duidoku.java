@@ -1,5 +1,6 @@
 
 public class Duidoku extends SudokuPuzzle {
+
     public Duidoku(){
         super(4);
     }

@@ -5,28 +5,30 @@ import static java.lang.Math.sqrt;
 public class SudokuPuzzle {
     private SudokuGrid grid;
 
-    public SudokuPuzzle(int size) {
-        grid = new SudokuGrid(size);
+    public SudokuPuzzle(int dimention) {
+        grid = new SudokuGrid(dimention);
     }
 
     public boolean isInRow(int row, int value){
-        for (int i=0; i<getSize(); i++){
+        for (int i=0; i<getDimention(); i++){
             if (grid.getGrid()[row][i] == value){
                 return true;
             }
         }
         return false;
     }
+
     public boolean isInCol(int col, int value){
-        for (int i=0; i<getSize(); i++){
+        for (int i=0; i<getDimention(); i++){
             if (grid.getGrid()[i][col] == value){
                 return true;
             }
         }
         return false;
     }
+
     public boolean isInBox(int row, int col, int value){
-        int boxRC = (int)sqrt(getSize()); //Number of boxes in a row or column.
+        int boxRC = (int)sqrt(getDimention()); //Number of boxes in a row or column.
         int boxNumber = ((col-1)/boxRC*boxRC + row/boxRC); //current number of box of the value.
         for (int i=(boxNumber%boxRC/boxRC); i<(boxNumber%boxRC/boxRC)+boxRC; i++){
             for (int j=(boxNumber/boxRC*boxRC); j<(boxNumber/boxRC*boxRC)+boxRC; j++){
@@ -37,6 +39,7 @@ public class SudokuPuzzle {
         }
         return false;
     }
+
     public boolean canInsert(int row, int col, int value){
         return !isInRow(row, value) && !isInCol(col, value) && !isInBox(row, col, value);
     }
@@ -50,8 +53,8 @@ public class SudokuPuzzle {
         }
     }
 
-    public int getSize(){
-        return grid.getSize();
+    public int getDimention(){
+        return grid.getDimention();
     }
 
     public SudokuGrid getGrid() { return grid; }
