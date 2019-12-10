@@ -1,13 +1,13 @@
 public class Player {
 
     private String name;
-    private boolean[] puzzlesSolved;
+    private boolean[][] puzzlesSolved= new boolean[2][10]; //i=0 classic, i=1 killer
 
 
-    public Player(String name) {
+    public Player(String name, int gameType) {
         this.name = name;
         for (int i = 0; i < Main.PUZZLES; i++){
-            puzzlesSolved[i] = false;
+            puzzlesSolved[gameType][i] = false;
         }
     }
 
@@ -15,11 +15,11 @@ public class Player {
         return name;
     }
 
-    public boolean hasDonePuzzle(int index){
-        return puzzlesSolved[index];
+    public boolean hasDonePuzzle(int index, int gameType){
+        return puzzlesSolved[gameType][index];
     }
 
-    public void setPuzzleDone(int index){
-        puzzlesSolved[index] = true;
+    public void setPuzzleDone(int index, int gameType){
+        puzzlesSolved[gameType][index] = true;
     }
 }

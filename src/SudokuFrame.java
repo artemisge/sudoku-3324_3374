@@ -5,35 +5,33 @@ import java.awt.event.ActionListener;
 
 public class SudokuFrame extends JFrame {
 
-    private JPanel buttonSelectionPanel;
+    //basic layout, menu
+    private JMenuBar menuBar;
+    private JMenu user;
+    private JMenu newGame;
+    private JMenuItem classicSudoku;
+    private JMenuItem killerSudoku;
+    private JMenuItem duidoku;
+
+    //sudoku grid components: nxn grid and n available numbers
     private JPanel sudokuPanel;
     private JButton[][] grid;
-    private JMenuBar menuBar;
-    private JMenu file;
-    private JMenu newGame;
-    private ButtonHandler buttonHandler;
+    private JButton[] numbers;
 
-    public SudokuFrame(int dimention){
 
+    private SudokuPuzzle puzzle;
+
+    public SudokuFrame(){
+
+        super("Sudoku Game");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("Sudoku");
         this.setMinimumSize(new Dimension(800, 600));
 
-        buttonHandler = new ButtonHandler();
-        grid = new JButton[dimention][dimention];
-        for (int i = 0; i < dimention; i++){
-            for (int j = 0; j < dimention; j++){
-                grid[i][j] = null;
-                grid[i][j].addActionListener(buttonHandler);
-            }
-        }
-        sudokuPanel = new JPanel();
-        sudokuPanel.setLayout(new GridLayout(dimention, dimention));
         menuBar = new JMenuBar();
-        file = new JMenu("Game");
+        user = new JMenu("User");
         newGame = new JMenu("New Game");
 
-        JMenuItem classicSudoku = new JMenuItem("Classic Sudoku");
+        classicSudoku = new JMenuItem("Classic Sudoku");
         classicSudoku.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -42,7 +40,7 @@ public class SudokuFrame extends JFrame {
         });
         newGame.add(classicSudoku);
 
-        JMenuItem killerSudoku = new JMenuItem("Killer Sudoku");
+        killerSudoku = new JMenuItem("Killer Sudoku");
         killerSudoku.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -51,7 +49,7 @@ public class SudokuFrame extends JFrame {
         });
         newGame.add(killerSudoku);
 
-        JMenuItem duidoku = new JMenuItem("Duidoku");
+        duidoku = new JMenuItem("Duidoku");
         duidoku.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -60,10 +58,10 @@ public class SudokuFrame extends JFrame {
         });
         newGame.add(duidoku);
 
-        file.add(newGame);
-        menuBar.add(file);
+        menuBar.add(newGame);
+        menuBar.add(user);
         this.setJMenuBar(menuBar);
-
+        this.setVisible(true);
     }
 
     public JButton[][] getGrid(){
@@ -75,22 +73,39 @@ public class SudokuFrame extends JFrame {
         grid[row][col].setText(i.toString());
     }
 
-    public class ButtonHandler implements ActionListener { //nested class
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            Object source = actionEvent.getSource();
-            for (int i = 0; i < 9; i++){
-                for (int j = 0; j < 9; j++){
-                    if (source == grid){
-                        processClick(i, j);
-                        return;
-                    }
-                }
+    public void startNewGame(int dimension){//TODO
+        sudokuPanel = new JPanel();
+        sudokuPanel.setLayout(new GridLayout(dimension, dimension));
+
+        this.add(sudokuPanel);
+    }
+
+    public void updateGrid(int button, int row, int col){
+        for (int i = 0; i < puzzle.getDimension(); i++){
+            for (int j = 0; j < puzzle.getDimension(); j++){
+                grid[i][j] = new JButton("");
+                sudokuPanel.add(grid[i][j]);
+                //grid[i][j].addActionListener(something);
             }
         }
-
-        public void processClick(int i, int j){
-
-        }
     }
+
+//    public class ButtonHandler implements ActionListener { //nested class
+//        @Override
+//        public void actionPerformed(ActionEvent actionEvent) {
+//            Object source = actionEvent.getSource();
+//            for (int i = 0; i < 9; i++){
+//                for (int j = 0; j < 9; j++){
+//                    if (source == grid){
+//                        processClick(i, j);
+//                        return;
+//                    }
+//                }
+//            }
+//        }
+//
+//        public void processClick(int i, int j){
+//
+//        }
+//    }
 }
