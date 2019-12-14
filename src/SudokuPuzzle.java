@@ -39,7 +39,7 @@ public class SudokuPuzzle {
 
     public boolean isInBox(int row, int col, int value){
         int boxRC = (int)sqrt(dimension); //Number of boxes in a row or column.
-        int boxNumber = ((col-1)/boxRC*boxRC + row/boxRC); //current number of box of the value.
+        int boxNumber = ((row)/boxRC*boxRC + col/boxRC); //current number of box of the value.
         for (int i=(boxNumber%boxRC/boxRC); i<(boxNumber%boxRC/boxRC)+boxRC; i++){
             for (int j=(boxNumber/boxRC*boxRC); j<(boxNumber/boxRC*boxRC)+boxRC; j++){
                 if (grid[i][j] == value){
