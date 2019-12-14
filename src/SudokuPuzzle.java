@@ -4,16 +4,17 @@ import java.lang.Math;
 import static java.lang.Math.sqrt;
 
 public class SudokuPuzzle {
-    private int[][] grid;
+    private Integer[][] grid;
     private int dimension;
     private int elementsAdded;
 
-    public SudokuPuzzle(int dimension) {
+    //this will load from files a puzzle and initialize accordingly
+    public SudokuPuzzle(int dimension, Integer[][] fileGrid) {
         this.dimension = dimension;
-        grid = new int[dimension][dimension];
+        grid = new Integer[dimension][dimension];
         for (int i = 0; i < dimension; i++){
             for (int j = 0; j < dimension; j++){
-                grid[i][j] = 0;
+                grid[i][j] = fileGrid[i][j];
             }
         }
         elementsAdded = 0;
@@ -71,7 +72,7 @@ public class SudokuPuzzle {
         return elementsAdded == dimension * dimension;
     }
 
-    public int[][] getGrid() {
+    public Integer[][] getGrid() {
         return grid;
     }
 
