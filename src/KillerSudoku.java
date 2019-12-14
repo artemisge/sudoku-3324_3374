@@ -1,9 +1,9 @@
 
 public class KillerSudoku extends SudokuPuzzle {
 
-    //TODO files
+    //
 
-    public KillerSudoku(){
-        super(9);
+    public KillerSudoku(Integer[][] fileGrid){
+        super(9, fileGrid);
     }
 }

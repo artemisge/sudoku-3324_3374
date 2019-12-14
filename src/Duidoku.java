@@ -1,8 +1,8 @@
 
 public class Duidoku extends SudokuPuzzle {
 
-    public Duidoku(){
-        super(4);
+    public Duidoku(Integer[][] fileGrid){
+       super(4, fileGrid);
     }
 
     //@Override

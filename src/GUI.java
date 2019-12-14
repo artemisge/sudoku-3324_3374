@@ -17,6 +17,7 @@ public class GUI extends JFrame
     public GUI()
     {
         makeFrame();
+
     }
 
     private void makeFrame()
@@ -109,7 +110,7 @@ public class GUI extends JFrame
 
     //returns the equivalent char version of the number that is saved in grid[i][j]
     //boolean letters is to add or not the ascii value to convert to letters. true for letters, false for numbers
-    public Character convertGridNumber(JButton button, int row, int col){
+    public void convertGridNumber(JButton button, int row, int col){
         Integer add = letters? 65-49: 0; //65 is the decimal value of "A" character and 45 is the decimal value of "1" character
         button.setText(puzzle.getGrid()[row][col].toString());
         button.setBounds(row*100, col*100, 1, 1);
