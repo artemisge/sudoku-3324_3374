@@ -11,10 +11,10 @@ public class GUI extends JFrame
     private void makeFrame()
     {
         setTitle("Sudoku");
-        setSize(600, 300);
+        setSize(1000, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         setVisible(true);
     }
 

@@ -1,7 +1,7 @@
 public class Player {
 
     private String name;
-    private boolean[][] puzzlesSolved= new boolean[2][10]; //i=0 classic, i=1 killer
+    /*private boolean[][] puzzlesSolved= new boolean[2][10]; //i=0 classic, i=1 killer
 
 
     public Player(String name, int gameType) {
@@ -21,5 +21,5 @@ public class Player {
 
     public void setPuzzleDone(int index, int gameType){
         puzzlesSolved[gameType][index] = true;
-    }
+    }*/
 }
