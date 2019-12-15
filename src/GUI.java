@@ -1,3 +1,5 @@
+import sun.management.jdp.JdpJmxPacket;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,9 +10,10 @@ import static java.awt.Color.CYAN;
 
 public class GUI extends JFrame
 {
+    private JFrame f=new JFrame();
     //private JPanel game; //panel for the game, sudoku grid, buttons etc
     private JButton[][] grid;//the grid constructed with buttons
-    int dimention;
+    int dimension;
     private SudokuPuzzle puzzle;
     boolean letters = false; //variable indicating wordoku
 
@@ -23,15 +26,16 @@ public class GUI extends JFrame
     private void makeFrame(int gameVersion)
     {
         //code for the main frame
-        setTitle("Sudoku");
-        setSize(1000, 600);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(true);
+        f.setTitle("Sudoku");
+        f.setSize(1000, 600);
+        f.setLocationRelativeTo(null);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setResizable(true);
 
 
-        setVisible(true);
 
+
+        createMenuBar();
         /*
         //this is to create the grid
         createPuzzle(gameVersion);
@@ -46,13 +50,14 @@ public class GUI extends JFrame
         }
         //add(game);*/
 
-
+        f.setVisible(true);
     }
 
     private void createMenuBar()
     {
         //menu bar with the options
         JMenuBar menu=new JMenuBar();
+
 
         JMenu menuOptions=new JMenu("Options");
         menuOptions.setMnemonic(KeyEvent.VK_A);
@@ -90,29 +95,19 @@ public class GUI extends JFrame
         menuOptions.addSeparator();
 
         //Log in option in menu bar
-        JMenuItem logIn=new JMenuItem("Log in");
+        JMenuItem logIn=new JMenuItem("Log in/Sign in");
         logIn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //popup to log in
+
+                String username=JOptionPane.showInputDialog(f,"Username",null);
             }
         });
         menuOptions.add(logIn);
 
-        menuOptions.addSeparator();
-
-        //Sign in option in menu bar
-        JMenuItem signIn=new JMenuItem("Sign in");
-        signIn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //popup to sign in
-            }
-        });
-        menuOptions.add(signIn);
-
-        setJMenuBar(menu);
+        f.setJMenuBar(menu);
     }
+
 
 /*
     //updates the whole grid, for example when there is a change
@@ -143,13 +138,13 @@ public class GUI extends JFrame
     {
         SudokuPuzzle puzzle;
         if (gameVersion == 0){
-            dimention = 9;
+            dimension = 9;
             puzzle = new NormalSudoku();
         }else if (gameVersion == 1){
-            dimention = 9;
+            dimension = 9;
             puzzle = new KillerSudoku();
         }else {
-            dimention = 4;
+            dimension = 4;
             puzzle = new Duidoku();
         }
     }*/
