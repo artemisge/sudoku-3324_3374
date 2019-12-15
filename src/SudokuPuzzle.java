@@ -11,6 +11,7 @@ public class SudokuPuzzle {
     //this will load from files a puzzle and initialize accordingly
     public SudokuPuzzle(int dimension) {
         this.dimension = dimension;
+        System.out.println("test3"+ dimension);
         grid = new Integer[dimension][dimension];
         for (int i = 0; i < dimension; i++){
             for (int j = 0; j < dimension; j++){

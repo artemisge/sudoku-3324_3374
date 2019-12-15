@@ -1,5 +1,3 @@
-import sun.management.jdp.JdpJmxPacket;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,11 +13,14 @@ public class GUI extends JFrame
     private JButton[][] grid;//the grid constructed with buttons
     int dimension;
     private SudokuPuzzle puzzle;
+    private int dimension;
     boolean letters = false; //variable indicating wordoku
+    private Integer[][] array;//temp array gia main
 
-    public GUI(int gameVersion)
+    public GUI(int gameVersion,Integer[][]array)
     {
         makeFrame(gameVersion);
+        this.array=array;
     }
 
     //maakes the main window for the game
@@ -31,8 +32,6 @@ public class GUI extends JFrame
         f.setLocationRelativeTo(null);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setResizable(true);
-
-
 
 
         createMenuBar();
@@ -49,7 +48,6 @@ public class GUI extends JFrame
             }
         }
         //add(game);*/
-
         f.setVisible(true);
     }
 
@@ -113,22 +111,21 @@ public class GUI extends JFrame
     //updates the whole grid, for example when there is a change
     // in boolean variable letters and the grid needs to change
     private void updateGrid(){
-        for(int i = 0; i < dimention; i++){
-            for(int j = 0; j < dimention; j++){
-                convertGridNumber(grid[i][j], i , j);
+        for(int i = 0; i < dimension; i++){
+            for(int j = 0; j < dimension; j++){
+                convertGridNumber(grid[i][j], i , j, array);
             }
         }
     }
 
     //returns the equivalent char version of the number that is saved in grid[i][j]
     //boolean letters is to add or not the ascii value to convert to letters. true for letters, false for numbers
-    private void convertGridNumber(JButton button, int row, int col){
-        //option for wordoku should not be here
-        //wordoku should be another function
+    private void convertGridNumber(JButton button, int row, int col, Integer[][] array){
         Integer add = letters? 65-49: 0; //65 is the decimal value of "A" character and 45 is the decimal value of "1" character
         try{
-        button.setText(puzzle.getGrid()[row][col].toString());
-        button.setBounds(row*100, col*100, 1, 1);
+            button.setText(array[row][col].toString());
+                    //puzzle.getGrid()[row][col].toString()); allagi gia main check
+            button.setBounds(row*100, col*100, 1, 1);
         }catch (Throwable e){
             System.out.println("Exception");
         }
@@ -148,7 +145,6 @@ public class GUI extends JFrame
             puzzle = new Duidoku();
         }
     }*/
-
 
     //useful code for changing between panels, after the main menu we go to game panel
 //        public void actionPerformed(ActionEvent ae)
