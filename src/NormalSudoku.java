@@ -1,10 +1,9 @@
 
 public class NormalSudoku extends SudokuPuzzle {
 
-    //TODO files
-
-    public NormalSudoku() {
-        super(9);
+    public NormalSudoku(Integer[][] fileGrid) {
+        super(9, fileGrid);
+        System.out.println("test2");
     }
 
 
