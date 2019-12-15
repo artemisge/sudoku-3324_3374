@@ -30,7 +30,7 @@ public class GUI extends JFrame
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(true);
-
+        createMenuBar();
 
         setVisible(true);
 
