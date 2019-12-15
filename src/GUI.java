@@ -11,9 +11,8 @@ public class GUI extends JFrame
     private JFrame f=new JFrame();
     //private JPanel game; //panel for the game, sudoku grid, buttons etc
     private JButton[][] grid;//the grid constructed with buttons
-    int dimension;
-    private SudokuPuzzle puzzle;
     private int dimension;
+    private SudokuPuzzle puzzle;
     boolean letters = false; //variable indicating wordoku
     private Integer[][] array;//temp array gia main
 

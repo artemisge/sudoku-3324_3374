@@ -1,5 +1,8 @@
 
 public class KillerSudoku extends SudokuPuzzle {
+    public KillerSudoku(int dimension, Integer[][] fileGrid) {
+        super(dimension, fileGrid);
+    }
 
     //
 

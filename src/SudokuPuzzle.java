@@ -5,11 +5,11 @@ import static java.lang.Math.sqrt;
 
 public class SudokuPuzzle {
     private Integer[][] grid;
-    /*private int dimension;
+    private int dimension;
     private int elementsAdded;
 
     //this will load from files a puzzle and initialize accordingly
-    public SudokuPuzzle(int dimension) {
+    public SudokuPuzzle(int dimension, Integer[][] fileGrid) {
         this.dimension = dimension;
         System.out.println("test3"+ dimension);
         grid = new Integer[dimension][dimension];
@@ -20,7 +20,7 @@ public class SudokuPuzzle {
         }
         elementsAdded = 0;
     }
-
+/*
     public boolean isInRow(int row, int value){
         for (int i=0; i<dimension; i++){
             if (grid[row][i] == value){
