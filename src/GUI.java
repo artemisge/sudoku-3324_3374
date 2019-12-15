@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 
 import static java.awt.Color.CYAN;
 
-public class GUI extends JFrame
+public class GUI extends JFrame implements ActionListener
 {
     //TO DELETE private JFrame f=new JFrame();
     private JPanel game; //panel for the game, sudoku grid, buttons etc
@@ -36,20 +36,86 @@ public class GUI extends JFrame
 
         //this is to create the puzzle using the array from main
         // (will change later, taking the array from files)
-        game = new JPanel();
-        //game.setLayout(new BorderLayout());
+
+        //main panel, will contain two smaller
+        game = new JPanel(new BorderLayout());
+
+
+        //panel inside the main panel for sudoku grid
+        // buttons, will be on the left
+        JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(9, 9 ));
+        gridPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        gridPanel.setPreferredSize(new Dimension(500, 500));
+
         createPuzzle(gameVersion);
         grid = new JButton[dimension][dimension];
-
         //initializing grid[][] and setting text to buttons
         for(int i = 0; i < dimension; i++){
             for(int j = 0; j < dimension; j++){
                 grid[i][j] = new JButton("");
                 convertGridNumber(grid[i][j], i , j);
-                game.add(grid[i][j], BorderLayout.CENTER);
+                gridPanel.add(grid[i][j]);
             }
         }
-        add(game, BorderLayout.CENTER);
+        game.add(gridPanel, BorderLayout.WEST);
+
+        //another panel inside of the main panel for
+        // the options, help check box and number buttons
+        //will be on the right
+        JPanel eastPanel = new JPanel();
+        eastPanel.setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        JButton clearAll = new JButton("Clear All");
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.gridwidth = 3;
+        constraints.insets = new Insets(5, 5, 50, 5);
+        eastPanel.add(clearAll, constraints);
+
+        JCheckBox wordoku = new JCheckBox("Wordoku");
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.gridwidth = 3;
+        constraints.insets = new Insets(5, 5, 5, 5);
+        eastPanel.add(wordoku, constraints);
+
+        JCheckBox help = new JCheckBox("Help");
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.gridwidth = 3;
+        constraints.insets = new Insets(5, 5, 5, 5);
+        eastPanel.add(help, constraints);
+
+        constraints.gridwidth = 1;
+        constraints.insets = new Insets(50, 2, 5, 2);
+        JButton numbers[] = new JButton[dimension];
+        for (Integer i = 1; i < dimension+1; i++){
+            numbers[i-1] = new JButton(i.toString());
+            constraints.gridx = i-1;
+            constraints.gridy = 5;
+            eastPanel.add(numbers[i-1], constraints);
+        }
+
+        constraints.insets = new Insets(5, 5, 5, 5);
+        JButton clearBox = new JButton("Clear Box");
+        constraints.gridx = 0;
+        constraints.gridy = 7;
+        constraints.gridwidth = 3;
+        eastPanel.add(clearBox, constraints);
+
+        constraints.insets = new Insets(50, 5, 5, 5);
+        JLabel label = new JLabel("You haven't logged in, your stats won't be saved");
+        constraints.gridx = 0;
+        constraints.gridy = 8;
+        constraints.gridwidth = 7;
+        eastPanel.add(label, constraints);
+
+        game.add(eastPanel, BorderLayout.EAST);
+
+        add(game);
+        pack();
         setVisible(true);
     }
 
