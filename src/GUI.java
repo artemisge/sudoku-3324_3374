@@ -8,13 +8,14 @@ import static java.awt.Color.CYAN;
 
 public class GUI extends JFrame implements ActionListener
 {
-    //TO DELETE private JFrame f=new JFrame();
     private JPanel game; //panel for the game, sudoku grid, buttons etc
     private JButton[][] grid;//the grid constructed with buttons
     private int dimension;
     private SudokuPuzzle puzzle;
     boolean letters = false; //variable indicating wordoku
     private Integer[][] array;//temp array gia main
+    private int clickedValue = -1;
+    JButton numbers[];
 
     public GUI(int gameVersion,Integer[][] array)
     {
@@ -22,7 +23,7 @@ public class GUI extends JFrame implements ActionListener
         makeFrame(gameVersion);
     }
 
-    //maakes the main window for the game
+    //makes the main window for the game
     private void makeFrame(int gameVersion)
     {
         //code for the main frame
@@ -54,6 +55,7 @@ public class GUI extends JFrame implements ActionListener
         for(int i = 0; i < dimension; i++){
             for(int j = 0; j < dimension; j++){
                 grid[i][j] = new JButton("");
+                grid[i][j].addActionListener(this);
                 convertGridNumber(grid[i][j], i , j);
                 gridPanel.add(grid[i][j]);
             }
@@ -90,9 +92,10 @@ public class GUI extends JFrame implements ActionListener
 
         constraints.gridwidth = 1;
         constraints.insets = new Insets(50, 2, 5, 2);
-        JButton numbers[] = new JButton[dimension];
+        numbers = new JButton[dimension];
         for (Integer i = 1; i < dimension+1; i++){
             numbers[i-1] = new JButton(i.toString());
+            numbers[i-1].addActionListener(this);
             constraints.gridx = i-1;
             constraints.gridy = 5;
             eastPanel.add(numbers[i-1], constraints);
@@ -218,15 +221,41 @@ public class GUI extends JFrame implements ActionListener
     }
 
 //    actionListener for grid buttons
+//  will use the variable clickedValue to assign a value to the grid
     public void actionPerformed(ActionEvent e) {
         JButton src = (JButton) e.getSource();
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++){
-                if (src==grid[i][j]) {
-                    // Do something...
-                }
-              }
+
+        for (int i = 0; i < dimension; i++){
+            if (numbers[i] == src){
+                clickedValue = i+1;//user has pressed that button, we save the value.
+                System.out.println(clickedValue);
+            }
         }
+        if ( clickedValue == -1){
+            //the case where the user has clicked the
+            // grid without first clicking a number to choose
+            //the value -1 corresponds to not an (acceptable) value
+
+        }else{
+            //the case where the user has chosen a value, so clickedValue has a value other than -1
+            for (int i = 0; i < dimension; i++) {
+                for (int j = 0; j < dimension; j++){
+                    if (src==grid[i][j]) {
+                        // Do something...
+                        //just for the test, the correct version is commented out
+                        array[i][j] = clickedValue;
+                        updateGrid();
+//                        if (puzzle.canInsert(i, j, clickedValue)){
+//                            puzzle.insert(i, j, clickedValue);
+//                        }else{
+//                            //couldn't insert value to that grid box
+//                            //put Timer JLabel
+//                        }
+                    }
+                }
+            }
+        }
+
     }
 
 
