@@ -4,9 +4,9 @@ import java.lang.Math;
 import static java.lang.Math.sqrt;
 
 public class SudokuPuzzle {
-    private Integer[][] grid;
-    private int dimension;
-    private int elementsAdded;
+    protected Integer[][] grid;
+    protected int dimension;
+    protected int elementsAdded;
 
     //this will load from files a puzzle and initialize accordingly
     public SudokuPuzzle(int dimension, Integer[][] fileGrid) {

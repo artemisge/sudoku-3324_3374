@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import static java.awt.Color.CYAN;
+import static java.awt.Color.white;
+import static java.lang.Math.sqrt;
 
 public class GUI extends JFrame implements ActionListener
 {
@@ -16,6 +18,8 @@ public class GUI extends JFrame implements ActionListener
     private Integer[][] array;//temp array gia main
     private int clickedValue = -1;
     JButton numbers[];
+    JButton clearBox;
+    JButton clearAll;
 
     public GUI(int gameVersion,Integer[][] array)
     {
@@ -55,6 +59,10 @@ public class GUI extends JFrame implements ActionListener
         for(int i = 0; i < dimension; i++){
             for(int j = 0; j < dimension; j++){
                 grid[i][j] = new JButton("");
+                grid[i][j].setBackground(Color.lightGray);
+                if ((((i)/(int)sqrt(dimension)*(int)sqrt(dimension) + j/(int)sqrt(dimension)) % 2 == 1)){
+                    grid[i][j].setBackground(white);
+                }
                 grid[i][j].addActionListener(this);
                 convertGridNumber(grid[i][j], i , j);
                 gridPanel.add(grid[i][j]);
@@ -69,7 +77,8 @@ public class GUI extends JFrame implements ActionListener
         eastPanel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
-        JButton clearAll = new JButton("Clear All");
+        clearAll = new JButton("Clear All");
+        clearAll.addActionListener(this);
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.gridwidth = 3;
@@ -102,7 +111,8 @@ public class GUI extends JFrame implements ActionListener
         }
 
         constraints.insets = new Insets(5, 5, 5, 5);
-        JButton clearBox = new JButton("Clear Box");
+        clearBox = new JButton("Clear Box");
+        clearBox.addActionListener(this);
         constraints.gridx = 0;
         constraints.gridy = 7;
         constraints.gridwidth = 3;
@@ -197,10 +207,12 @@ public class GUI extends JFrame implements ActionListener
         // 65 is the decimal value of "A" character and 45 is the decimal value of "1" character
 
         try{
-            button.setText(array[row][col].toString());
-                    //puzzle.getGrid()[row][col].toString()); allagi gia main check
-            button.addActionListener(this::actionPerformed);
-            //button.setBounds(row*100, col*100, 1, 1);
+            if ( array[row][col] == 0){
+                button.setText("");
+            } else{
+                button.setText(array[row][col].toString());
+            }
+            //puzzle.getGrid()[row][col].toString()); allagi gia main check
         }catch (Throwable e){
             System.out.println("Exception");
         }
@@ -231,16 +243,29 @@ public class GUI extends JFrame implements ActionListener
                 System.out.println(clickedValue);
             }
         }
+        if (clearBox == src){
+            clickedValue = 0;//user has pressed clear button, we save the value.
+            System.out.println(clickedValue);
+        }
+
+        if (clearAll == src){
+            for (int i = 0; i < dimension; i++) {
+                for (int j = 0; j < dimension; j++){
+                        array[i][j] = 0;
+                }
+            }
+            updateGrid();
+        }
+
         if ( clickedValue == -1){
             //the case where the user has clicked the
             // grid without first clicking a number to choose
             //the value -1 corresponds to not an (acceptable) value
-
         }else{
             //the case where the user has chosen a value, so clickedValue has a value other than -1
             for (int i = 0; i < dimension; i++) {
                 for (int j = 0; j < dimension; j++){
-                    if (src==grid[i][j]) {
+                    if (src == grid[i][j]) {
                         // Do something...
                         //just for the test, the correct version is commented out
                         array[i][j] = clickedValue;
@@ -254,9 +279,13 @@ public class GUI extends JFrame implements ActionListener
                     }
                 }
             }
+
         }
 
     }
 
 
 }
+//2 lines text in JButton
+//JButton button = new JButton("<html><font size=-1><b><u>Click-Me!</u></b>"
+//                                 + "<p>Do so!</html>");
