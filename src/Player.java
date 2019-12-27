@@ -1,21 +1,59 @@
+import java.util.HashMap;
+
 public class Player {
 
     private String name;
-    /*private boolean[][] puzzlesSolved= new boolean[2][10]; //i=0 classic, i=1 killer
+    private int wins;
+    private int losses;
+    private HashMap<Integer,Integer> solvedPuzzles;
+    private IOManager myManager;
 
-
-    public Player(String name, int gameType) {
+    public Player(String name) {
         this.name = name;
-        for (int i = 0; i < Main.PUZZLES; i++){
-            puzzlesSolved[gameType][i] = false;
-        }
+        myManager=new IOManager(name);
+        solvedPuzzles=new HashMap<>();
+        wins=0;
+        losses=0;
     }
 
     public String getName(){
         return name;
     }
 
-    public boolean hasDonePuzzle(int index, int gameType){
+    public int getWins()
+    {
+        return wins;
+    }
+
+    public int getLosses()
+    {
+        return losses;
+    }
+
+    private void addSolvedPuzzle()
+    {
+        int newPuzzle=myManager.getHashCode();
+        solvedPuzzles.put(newPuzzle,1);
+    }
+
+    private boolean checkSolved(int hashCode)
+    {
+        if(solvedPuzzles.get(hashCode)==1)
+            return true;
+        return false;
+    }
+
+    private void addWin()
+    {
+        wins++;
+    }
+
+    private void addLoss()
+    {
+        losses++;
+    }
+
+    /*public boolean hasDonePuzzle(int index, int gameType){
         return puzzlesSolved[gameType][index];
     }
 
