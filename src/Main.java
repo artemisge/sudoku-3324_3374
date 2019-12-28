@@ -7,7 +7,7 @@ public class Main {
                 test[i][j] = 1;
             }
         }
-        //GUI myGui=new GUI(0, test);
+        GUI myGui=new GUI(0, test);
         KillerSudoku ks = new KillerSudoku(test);
     }
 }

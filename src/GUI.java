@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import static java.awt.Color.CYAN;
 import static java.awt.Color.white;
@@ -10,24 +11,28 @@ import static java.lang.Math.sqrt;
 
 public class GUI extends JFrame implements ActionListener
 {
+    private GameManager manager;
     private JPanel game; //panel for the game, sudoku grid, buttons etc
     private JButton[][] grid;//the grid constructed with buttons
     private int dimension;
     private SudokuPuzzle puzzle;
-    boolean letters = false; //variable indicating wordoku
+    private boolean letters = false; //variable indicating wordoku
     private Integer[][] array;//temp array gia main
     private int clickedValue = -1;
     JButton numbers[];
     JButton clearBox;
     JButton clearAll;
+    boolean loggedIn=false;
 
     public GUI(int gameVersion,Integer[][] array)
     {
         this.array = array.clone();
+        manager=new GameManager();
         makeFrame(gameVersion);
+       // this.array=array;
     }
 
-    //makes the main window for the game
+    //maakes the main window for the game
     private void makeFrame(int gameVersion)
     {
         //code for the main frame
@@ -130,6 +135,9 @@ public class GUI extends JFrame implements ActionListener
         add(game);
         pack();
         setVisible(true);
+
+        //String [] puzzle=manager.loadPuzzle();
+
     }
 
     private void createMenuBar()
@@ -149,21 +157,21 @@ public class GUI extends JFrame implements ActionListener
         classic.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //createPuzzle(0);
+                createPuzzle(0);
             }
         });
         JMenuItem killer=new JMenuItem("Killer");
         killer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //createPuzzle(1);
+                createPuzzle(1);
             }
         });
         JMenuItem duidoku=new JMenuItem("Duidoku");
         duidoku.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //createPuzzle(2);
+                createPuzzle(2);
             }
         });
         newGame.add(classic);
@@ -174,15 +182,28 @@ public class GUI extends JFrame implements ActionListener
         menuOptions.addSeparator();
 
         //Log in option in menu bar
-        JMenuItem logIn=new JMenuItem("Log in/Sign in");
+        JMenuItem logIn=new JMenuItem("Log in/Sign up");
         logIn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
                 String username=JOptionPane.showInputDialog(getContentPane(),"Username",null);
+                //check if user exists in file if not
+                Player player=new Player(username);
+                //checks if player has solved current puzzle if not createPuzzle()
+                loggedIn=true;
             }
         });
         menuOptions.add(logIn);
+
+        JMenuItem stats=new JMenuItem("Statistics");
+        logIn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        menuOptions.add(stats);
 
         setJMenuBar(menu);
     }
@@ -222,6 +243,7 @@ public class GUI extends JFrame implements ActionListener
     {
         if (gameVersion == 0){
             dimension = 9;
+            //loadPuzzle()
             puzzle = new NormalSudoku(array);
         }else if (gameVersion == 1){
             dimension = 9;

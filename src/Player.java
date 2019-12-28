@@ -1,19 +1,23 @@
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 
 public class Player {
 
     private String name;
-    private int wins;
-    private int losses;
+    private int duidokuWins;
+    private int duidokuLosses;
     private HashMap<Integer,Integer> solvedPuzzles;
     private IOManager myManager;
 
     public Player(String name) {
         this.name = name;
-        myManager=new IOManager(name);
+        myManager=new IOManager();
+        myManager.saveUser(name);
         solvedPuzzles=new HashMap<>();
-        wins=0;
-        losses=0;
+        duidokuWins=0;
+        duidokuLosses=0;
     }
 
     public String getName(){
@@ -22,12 +26,12 @@ public class Player {
 
     public int getWins()
     {
-        return wins;
+        return duidokuWins;
     }
 
     public int getLosses()
     {
-        return losses;
+        return duidokuLosses;
     }
 
     private void addSolvedPuzzle()
@@ -36,21 +40,35 @@ public class Player {
         solvedPuzzles.put(newPuzzle,1);
     }
 
-    private boolean checkSolved(int hashCode)
+    public boolean checkSolved(int hashCode)
     {
         if(solvedPuzzles.get(hashCode)==1)
             return true;
         return false;
     }
 
+    public int getNextUnsolvedPuzzle()
+    {
+        Iterator<Map.Entry<Integer,Integer>> it;
+        it= solvedPuzzles.entrySet().iterator();
+        while(it.hasNext())
+        {
+            Map.Entry<Integer,Integer> e=it.next();
+            if(e.getValue()!=1)
+                return e.getKey();
+        }
+        return -1;
+
+    }
+
     private void addWin()
     {
-        wins++;
+        duidokuWins++;
     }
 
     private void addLoss()
     {
-        losses++;
+        duidokuLosses++;
     }
 
     /*public boolean hasDonePuzzle(int index, int gameType){

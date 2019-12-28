@@ -1,16 +1,21 @@
+import com.sun.deploy.util.ArrayUtil;
+
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.*;
+import java.util.ArrayList;
 
 public class IOManager
 {
     private String filename;
     private File file;
     private int hashCode;
+    private static ArrayList<File> normalPuzzles;
+    private static ArrayList<File> killerPuzzles;
+    private static ArrayList<File> duidokuPuzzles;
 
-    public IOManager(String usernameFile)
+    public IOManager()
     {
-        filename=usernameFile;
         //PrintWriter outputFile=new PrintWriter(new FileWriter(usernameFile));
     }
 
@@ -39,5 +44,16 @@ public class IOManager
     public int getHashCode()
     {
         return hashCode;
+    }
+
+    public boolean saveUser(String name)
+    {
+        try {
+            File newFile = new File("C:\\%s.txt", name);
+            return true;
+        }catch(Exception e)
+        {
+            return false;
+        }
     }
 }

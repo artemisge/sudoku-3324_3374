@@ -25,7 +25,7 @@ public class KillerSudoku extends SudokuPuzzle {
 //                    System.out.println(number);
 //                }
 //            }
-            FileReader fileReader = new FileReader("C:\\Users\\user\\IdeaProjects\\sudoku-3324_3374\\src\\Killer1.txt");
+            FileReader fileReader = new FileReader("C:\\Users\\Oxi reman KALA\\IdeaProjects\\sudoku-3324_3374\\src\\Killer1.txt");
             Scanner sc = new Scanner(fileReader);
             regionNum = 0;
             for (int i = 0; i < dimension; i++) {
