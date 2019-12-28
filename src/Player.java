@@ -20,6 +20,21 @@ public class Player {
         duidokuLosses=0;
     }
 
+    //des an saresei kai apofasise :)
+//    public Player(String name) {//+, int gameType
+//        load(name);
+//    }
+
+//    // Reads player "name" from file, or initializes it to zero if not found
+////    public void load(String name) {
+////        this.name = name;
+////    }
+////
+////    //updates file, once won or lost duidoku, or completed a puzzle
+////    public void save() {
+////
+////    }
+
     public String getName(){
         return name;
     }

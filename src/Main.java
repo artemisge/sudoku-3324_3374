@@ -7,7 +7,13 @@ public class Main {
                 test[i][j] = 1;
             }
         }
-        GUI myGui=new GUI(0, test);
-        KillerSudoku ks = new KillerSudoku(test);
+        Integer test2[][] = new Integer[4][4];
+        for (int i = 0; i<4; i++){
+            for (int j = 0 ; j<4; j++){
+                test2[i][j] = 5;
+            }
+        }
+        GUI myGui=new GUI(2, test2);
+        //KillerSudoku ks = new KillerSudoku(test);
     }
 }

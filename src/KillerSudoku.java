@@ -14,41 +14,6 @@ public class KillerSudoku extends SudokuPuzzle {
     public KillerSudoku(Integer[][] fileGrid) {
         super(9, fileGrid);
 
-        //this code will be on IOManager Class, but it's here temporarily for testing
-        try{
-//            String fileName = "src/Killer1.txt";
-//            FileInputStream fileInputStream = new FileInputStream(fileName);
-//            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-//            try(BufferedReader bufferedReader = new BufferedReader(inputStreamReader)){
-//                int number;
-//                while((number = Integer.parseInt(bufferedReader.readLine())) != -1){
-//                    System.out.println(number);
-//                }
-//            }
-            FileReader fileReader = new FileReader("C:\\Users\\Oxi reman KALA\\IdeaProjects\\sudoku-3324_3374\\src\\Killer1.txt");
-            Scanner sc = new Scanner(fileReader);
-            regionNum = 0;
-            for (int i = 0; i < dimension; i++) {
-                for (int j = 0; j < dimension; j++){
-                    int tmp = sc.nextInt();
-                    regionIndex[i][j] = tmp;
-                    System.out.println(regionIndex[i][j]);
-                    if (tmp > regionNum){
-                        regionNum = tmp;
-                    }
-                }
-            }
-            regionNum++;
-            regionColor = new int[regionNum];
-            regionSum = new int[regionNum];
-            for (int i = 0; i < regionNum; i++){
-                regionColor[i] = sc.nextInt();
-                regionSum[i] = sc.nextInt();
-            }
-            sc.close();
-        }catch(Exception e){
-            System.out.println("It was a File Oopsie");
-        }//TODO finally
 
 
     }
@@ -116,6 +81,35 @@ public class KillerSudoku extends SudokuPuzzle {
         return super.canInsert(row, col, value) && isSumOk(row, col, value);
     }
 
+    @Override
+    public void loadFromFile(){
+        try{
+            FileReader fileReader = new FileReader("C:\\Users\\user\\IdeaProjects\\sudoku-3324_3374\\src\\Killer1.txt");
+            Scanner sc = new Scanner(fileReader);
+            regionNum = 0;
+            for (int i = 0; i < dimension; i++) {
+                for (int j = 0; j < dimension; j++){
+                    int tmp = sc.nextInt();
+                    regionIndex[i][j] = tmp;
+                    System.out.println(regionIndex[i][j]);
+                    if (tmp > regionNum){
+                        regionNum = tmp;
+                    }
+                }
+            }
+            regionNum++;
+            regionColor = new int[regionNum];
+            regionSum = new int[regionNum];
+            for (int i = 0; i < regionNum; i++){
+                regionColor[i] = sc.nextInt();
+                regionSum[i] = sc.nextInt();
+            }
+            sc.close();
+        }catch(Exception e){
+            System.out.println("It was a File Oopsie");
+        }//TODO finally
+
+    }
 
     @Override
     public boolean isSolved() {

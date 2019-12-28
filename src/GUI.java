@@ -19,10 +19,10 @@ public class GUI extends JFrame implements ActionListener
     private boolean letters = false; //variable indicating wordoku
     private Integer[][] array;//temp array gia main
     private int clickedValue = -1;
-    JButton numbers[];
-    JButton clearBox;
-    JButton clearAll;
-    boolean loggedIn=false;
+    private JButton numbers[];
+    private JButton clearBox;
+    private JButton clearAll;
+    private boolean loggedIn = false;
 
     public GUI(int gameVersion,Integer[][] array)
     {
@@ -32,7 +32,7 @@ public class GUI extends JFrame implements ActionListener
        // this.array=array;
     }
 
-    //maakes the main window for the game
+    //makes the main window for the game
     private void makeFrame(int gameVersion)
     {
         //code for the main frame
@@ -40,7 +40,7 @@ public class GUI extends JFrame implements ActionListener
         setSize(1000, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(true);
+        setResizable(false);
 
         createMenuBar();
 
@@ -49,25 +49,31 @@ public class GUI extends JFrame implements ActionListener
 
         //main panel, will contain two smaller
         game = new JPanel(new BorderLayout());
-
+        createPuzzle(gameVersion);//arxikopoiei to dimension kai ftiaxnei enan array stin metabliti puzzle.
 
         //panel inside the main panel for sudoku grid
         // buttons, will be on the left
         JPanel gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(9, 9 ));
+        gridPanel.setLayout(new GridLayout(dimension, dimension));
         gridPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         gridPanel.setPreferredSize(new Dimension(500, 500));
 
-        createPuzzle(gameVersion);
         grid = new JButton[dimension][dimension];
         //initializing grid[][] and setting text to buttons
         for(int i = 0; i < dimension; i++){
             for(int j = 0; j < dimension; j++){
                 grid[i][j] = new JButton("");
                 grid[i][j].setBackground(Color.lightGray);
-                if ((((i)/(int)sqrt(dimension)*(int)sqrt(dimension) + j/(int)sqrt(dimension)) % 2 == 1)){
-                    grid[i][j].setBackground(white);
+                if (dimension == 9){
+                    if ((((i)/(int)sqrt(dimension)*(int)sqrt(dimension) + j/(int)sqrt(dimension)) % 2 == 1)){
+                        grid[i][j].setBackground(white);
+                    }
+                }else{//an einai duidoku, oste na bgainoun xiasti ta xromata
+                    if ((((i)/(int)sqrt(dimension)*(int)sqrt(dimension) + j/(int)sqrt(dimension)) % 3 == 0)){
+                        grid[i][j].setBackground(white);
+                    }
                 }
+
                 grid[i][j].addActionListener(this);
                 convertGridNumber(grid[i][j], i , j);
                 gridPanel.add(grid[i][j]);

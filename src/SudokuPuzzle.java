@@ -71,10 +71,9 @@ public class SudokuPuzzle {
         return elementsAdded == dimension * dimension;
     }
 
-    public Integer[][] getGrid() {
-        return grid;
+    public void loadFromFile(){
+        //to be overridden
     }
-
     //public boolean supportsAI() { return false; }
     //public SudokuSolver createSolver() { return null; }*/
 }
