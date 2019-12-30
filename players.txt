@@ -1,2 +1,15 @@
-Dimitris 2 5 168 903
-Katerina 8 0 24 1
+paiktis1
+Classic
+1   4   7   9
+Killer
+3
+Duidoku
+12  4
+
+paiktis2
+Classic
+1   2
+Killer
+6   7
+Duidoku
+14  6
