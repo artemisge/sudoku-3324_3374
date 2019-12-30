@@ -4,7 +4,7 @@ import java.lang.Math;
 import static java.lang.Math.sqrt;
 
 public class SudokuPuzzle {
-    protected Integer[][] grid;
+    protected int[][] grid;
     protected int dimension;
     protected int elementsAdded;
     private int numberOfPuzzleInFile;
@@ -20,11 +20,10 @@ public class SudokuPuzzle {
     }
 
     //this will load from files a puzzle and initialize accordingly
-    public SudokuPuzzle(int dimension, Integer[][] fileGrid) {
+    public SudokuPuzzle(int dimension) {
         this.dimension = dimension;
         System.out.println("Mother Class Sudoku constructor, dimension is: "+ dimension);
-        grid = new Integer[dimension][dimension];
-        grid = fileGrid.clone();//can print grid, tested, so far so good
+        grid = new int[dimension][dimension];
         elementsAdded = 0;
     }
 
@@ -60,12 +59,13 @@ public class SudokuPuzzle {
     }
 
     public boolean canInsert(int row, int col, int value){
-        return !isInRow(row, value) && !isInCol(col, value) && !isInBox(row, col, value);
+        boolean sudokuRules = !isInRow(row, value) && !isInCol(col, value) && !isInBox(row, col, value);
+        return sudokuRules || value == 0;
     }
 
     //adds, subtracts, or does nothing to elementsAdded,
     // depending on current and previous value of the grid box
-    public void insert(int row, int col, int value){
+    public void insert(int row, int col, int value) {
         if (value == 0 && grid[row][col] != 0){
             elementsAdded -= 1;
         } else if (value != 0 && grid[row][col] == 0){
@@ -82,9 +82,15 @@ public class SudokuPuzzle {
         return elementsAdded == dimension * dimension;
     }
 
-    public void loadFromFile(){
+    public void loadFromFile(int numberOfGame) {
         //to be overridden
     }
-    //public boolean supportsAI() { return false; }
-    //public SudokuSolver createSolver() { return null; }*/
+
+    public void reset() {
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                grid[i][j] = 0;
+            }
+        }
+    }
 }

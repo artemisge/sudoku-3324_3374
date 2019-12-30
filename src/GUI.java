@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static java.awt.Color.CYAN;
@@ -12,29 +11,26 @@ import static java.lang.Math.sqrt;
 
 public class GUI extends JFrame implements ActionListener
 {
-    private GameManager manager;
     private JPanel game; //panel for the game, sudoku grid, buttons etc
-    private JButton[][] grid;//the grid constructed with buttons
-    private int dimension;
-    private SudokuPuzzle puzzle;
+    private JButton[][] grid;  //the grid constructed with buttons
     private boolean letters = false; //variable indicating wordoku
-    private Integer[][] array;//temp array gia main
+    private Integer[][] array;  //temp array gia main
     private int clickedValue = -1;
     private JButton numbers[];
     private JButton clearBox;
     private JButton clearAll;
-    private boolean loggedIn = false;
+    private JLabel userLabel;
+    private GameManager gm;
 
-    public GUI(int gameVersion,Integer[][] array)  throws IOException
+    public GUI()
     {
-        this.array = array.clone();
-        manager=new GameManager();
+        gm = new GameManager();
+        int gameVersion = 0; //will initialize to a classic Sudoku
         makeFrame(gameVersion);
-       // this.array=array;
     }
 
-    //makes the main window for the game
-    private void makeFrame(int gameVersion) throws IOException
+    //makes the main window for the game and the sudoku grid with the starter puzzle
+    private void makeFrame(int gameVersion)
     {
         //code for the main frame
         setTitle("Sudoku");
@@ -50,27 +46,27 @@ public class GUI extends JFrame implements ActionListener
 
         //main panel, will contain two smaller
         game = new JPanel(new BorderLayout());
-        createPuzzle(gameVersion);//arxikopoiei to dimension kai ftiaxnei enan array stin metabliti puzzle.
+        createPuzzle(gameVersion);  // arxikopoiei to dimension kai ftiaxnei enan array stin metabliti puzzle.
 
         //panel inside the main panel for sudoku grid
         // buttons, will be on the left
         JPanel gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(dimension, dimension));
+        gridPanel.setLayout(new GridLayout(gm.puzzle.dimension, gm.puzzle.dimension));
         gridPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         gridPanel.setPreferredSize(new Dimension(500, 500));
 
-        grid = new JButton[dimension][dimension];
+        grid = new JButton[gm.puzzle.dimension][gm.puzzle.dimension];
         //initializing grid[][] and setting text to buttons
-        for(int i = 0; i < dimension; i++){
-            for(int j = 0; j < dimension; j++){
+        for(int i = 0; i < gm.puzzle.dimension; i++){
+            for(int j = 0; j < gm.puzzle.dimension; j++){
                 grid[i][j] = new JButton("");
                 grid[i][j].setBackground(Color.lightGray);
-                if (dimension == 9){
-                    if ((((i)/(int)sqrt(dimension)*(int)sqrt(dimension) + j/(int)sqrt(dimension)) % 2 == 1)){
+                if (gm.puzzle.dimension == 9){
+                    if ((((i)/(int)sqrt(gm.puzzle.dimension)*(int)sqrt(gm.puzzle.dimension) + j/(int)sqrt(gm.puzzle.dimension)) % 2 == 1)){
                         grid[i][j].setBackground(white);
                     }
                 }else{//an einai duidoku, oste na bgainoun xiasti ta xromata
-                    if ((((i)/(int)sqrt(dimension)*(int)sqrt(dimension) + j/(int)sqrt(dimension)) % 3 == 0)){
+                    if ((((i)/(int)sqrt(gm.puzzle.dimension)*(int)sqrt(gm.puzzle.dimension) + j/(int)sqrt(gm.puzzle.dimension)) % 3 == 0)){
                         grid[i][j].setBackground(white);
                     }
                 }
@@ -88,6 +84,10 @@ public class GUI extends JFrame implements ActionListener
         JPanel eastPanel = new JPanel();
         eastPanel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
+
+        //TODO fix this one for Killer Sudoku:
+//        String html="<html><small>%s</small><br><center><big>&nbsp;&nbsp;&nbsp;%d&nbsp;&nbsp;&nbsp;</big><br><small>&nbsp;</small>";
+//        JButton b3 = new JButton(String.format(html, "15", 9));
 
         clearAll = new JButton("Clear All");
         clearAll.addActionListener(this);
@@ -113,8 +113,8 @@ public class GUI extends JFrame implements ActionListener
 
         constraints.gridwidth = 1;
         constraints.insets = new Insets(50, 2, 5, 2);
-        numbers = new JButton[dimension];
-        for (Integer i = 1; i < dimension+1; i++){
+        numbers = new JButton[gm.puzzle.dimension];
+        for (Integer i = 1; i < gm.puzzle.dimension+1; i++){
             numbers[i-1] = new JButton(i.toString());
             numbers[i-1].addActionListener(this);
             constraints.gridx = i-1;
@@ -131,11 +131,11 @@ public class GUI extends JFrame implements ActionListener
         eastPanel.add(clearBox, constraints);
 
         constraints.insets = new Insets(50, 5, 5, 5);
-        JLabel label = new JLabel("You haven't logged in, your stats won't be saved");
+        userLabel = new JLabel("You haven't logged in, your stats won't be saved");
         constraints.gridx = 0;
         constraints.gridy = 8;
         constraints.gridwidth = 7;
-        eastPanel.add(label, constraints);
+        eastPanel.add(userLabel, constraints);
 
         game.add(eastPanel, BorderLayout.EAST);
 
@@ -143,11 +143,9 @@ public class GUI extends JFrame implements ActionListener
         pack();
         setVisible(true);
 
-        //String [] puzzle=manager.loadPuzzle();
-
     }
 
-    private void createMenuBar() throws IOException
+    private void createMenuBar()
     {
         //menu bar with the options
         JMenuBar menu=new JMenuBar();
@@ -193,21 +191,23 @@ public class GUI extends JFrame implements ActionListener
         logIn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                String username=JOptionPane.showInputDialog(getContentPane(),"Username",null);
-                //check if user exists in file if not
-                //Player player=new Player(username);
-                //checks if player has solved current puzzle if not createPuzzle()
-                loggedIn=true;
+                String username = JOptionPane.showInputDialog(getContentPane(),"Username",null);
+                gm.player.setName(username);
+                userLabel.setText("You are logged as " + gm.player.getName());
+                //TODO den apothikeuei dedomena, oute sugxronizei ta dedomena otan kanei login kapoios uparxontas xristis. prepei na ftiaxtei sunartisi stin class Player pou kanei update i kati..
             }
         });
         menuOptions.add(logIn);
 
         JMenuItem stats=new JMenuItem("Statistics");
-        logIn.addActionListener(new ActionListener() {
+        stats.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                if (gm.player.getName().equals("")) {
+                    JOptionPane.showMessageDialog(getContentPane(), "You haven't logged in yet");
+                } else {
+                    JOptionPane.showMessageDialog(getContentPane(), "Duidoku Wins: " + gm.player.getWins() + "\nDuidoku Losses: " + gm.player.getLosses());
+                }
             }
         });
         menuOptions.add(stats);
@@ -220,8 +220,8 @@ public class GUI extends JFrame implements ActionListener
     //updates the whole grid, for example when there is a change
     // in boolean variable letters and the grid needs to change
     private void updateGrid(){
-        for(int i = 0; i < dimension; i++){
-            for(int j = 0; j < dimension; j++){
+        for(int i = 0; i < gm.puzzle.dimension; i++){
+            for(int j = 0; j < gm.puzzle.dimension; j++){
                 convertGridNumber(grid[i][j], i , j);
             }
         }
@@ -229,37 +229,34 @@ public class GUI extends JFrame implements ActionListener
 
     //returns the equivalent char version of the number that is saved in grid[i][j]
     //boolean letters is to add or not the ascii value to convert to letters. true for letters, false for numbers
-    private void convertGridNumber(JButton button, int row, int col){
+    private void convertGridNumber(JButton button, int row, int col) {
 
         //Integer add = letters? 65-49: 0;
         // 65 is the decimal value of "A" character and 45 is the decimal value of "1" character
 
-        try{
-            if ( array[row][col] == 0){
+        try {
+            if ( gm.puzzle.grid[row][col] == 0){
+                //TODO killer sudoku
+//                button.setMargin(new Insets(0, 0, 0, 0));
+//                button.setText(String.format("<html><small>%s</small><br><center style='width: 50'><big>%s</big><br><small>&nbsp;</small>", "14", ""));
                 button.setText("");
             } else{
-                button.setText(array[row][col].toString());
+                button.setMargin(new Insets(0, 0, 0, 0));
+                button.setText(String.format("<html><small>%s</small><br><center style='width: 50'><big>%s</big><br><small>&nbsp;</small>", "", Integer.toString(gm.puzzle.grid[row][col])));
             }
-            //puzzle.getGrid()[row][col].toString()); allagi gia main check
         }catch (Throwable e){
             System.out.println("Exception");
         }
     }
 
-    public void createPuzzle(int gameVersion)
+    private void createPuzzle(int gameVersion)
     {
-        if (gameVersion == 0){
-            dimension = 9;
-            //loadPuzzle()
-            puzzle = new NormalSudoku(array);
-        }else if (gameVersion == 1){
-            dimension = 9;
-            //load puzzle
-            puzzle = new KillerSudoku(array);
-        }else {
-            dimension = 4;
-            //load puzzle
-            puzzle = new Duidoku(array);
+        if (gameVersion == 0) {
+            gm.puzzle = new NormalSudoku(gm.player.getNextUnsolvedPuzzle(0));
+        } else if (gameVersion == 1) {
+            gm.puzzle = new KillerSudoku(gm.player.getNextUnsolvedPuzzle(1));
+        } else {
+            gm.puzzle = new Duidoku();
         }
     }
 
@@ -268,45 +265,39 @@ public class GUI extends JFrame implements ActionListener
     public void actionPerformed(ActionEvent e) {
         JButton src = (JButton) e.getSource();
 
-        for (int i = 0; i < dimension; i++){
-            if (numbers[i] == src){
-                clickedValue = i+1;//user has pressed that button, we save the value.
+        for (int i = 0; i < gm.puzzle.dimension; i++){
+            if (numbers[i] == src) {
+                clickedValue = i+1; //user has pressed that button, we save the value.
                 System.out.println(clickedValue);
             }
         }
-        if (clearBox == src){
-            clickedValue = 0;//user has pressed clear button, we save the value.
+        if (clearBox == src) {
+            clickedValue = 0;  //user has pressed clear button, we save the value.
             System.out.println(clickedValue);
         }
 
-        if (clearAll == src){
-            for (int i = 0; i < dimension; i++) {
-                for (int j = 0; j < dimension; j++){
-                        array[i][j] = 0;
-                }
-            }
+        if (clearAll == src) {
+            gm.puzzle.reset();
             updateGrid();
         }
 
-        if ( clickedValue == -1){
+        if ( clickedValue == -1) {
             //the case where the user has clicked the
             // grid without first clicking a number to choose
             //the value -1 corresponds to not an (acceptable) value
-        }else{
+        } else {
             //the case where the user has chosen a value, so clickedValue has a value other than -1
-            for (int i = 0; i < dimension; i++) {
-                for (int j = 0; j < dimension; j++){
+            for (int i = 0; i < gm.puzzle.dimension; i++) {
+                for (int j = 0; j < gm.puzzle.dimension; j++){
                     if (src == grid[i][j]) {
-                        // Do something...
-                        //just for the test, the correct version is commented out
-                        array[i][j] = clickedValue;
-                        updateGrid();
-//                        if (puzzle.canInsert(i, j, clickedValue)){
-//                            puzzle.insert(i, j, clickedValue);
-//                        }else{
-//                            //couldn't insert value to that grid box
-//                            //put Timer JLabel
-//                        }
+                        if (gm.puzzle.canInsert(i, j, clickedValue)) {
+                            gm.puzzle.insert(i, j, clickedValue);
+                            updateGrid();
+                        } else {
+                            System.out.println("invalid move");
+                            //TODO put that in timer Jlabel
+                        }
+
                     }
                 }
             }

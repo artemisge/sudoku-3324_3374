@@ -1,6 +1,8 @@
-import java.io.IOException;
+import java.io.FileReader;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 
 
 public class Player {
@@ -8,59 +10,28 @@ public class Player {
     private String name;
     private int duidokuWins;
     private int duidokuLosses;
-    private int [] normalSolvedPuzzles;
-    private int [] killerSolvedPuzzles;
-    //private HashMap<Integer,Integer> solvedPuzzles;
-    private IOManager myManager;
+    private int[][] solvedPuzzles;//0=normal, 1=killer
 
-    //2 constructores
-    public Player(String name) throws IOException{
+    public Player(String name) {
+        //initializing everything from scratch and if the player already exists, loadFromFile will update everything
         this.name = name;
-        normalSolvedPuzzles=new int[10];
-        killerSolvedPuzzles=new int[10];
-        //saveUser();
-        //check if player exists
-        myManager=new IOManager();
-        myManager.addPlayer(name);
-        //myManager.saveUser(name);
-        //solvedPuzzles=new HashMap<>();
+        solvedPuzzles=new int[2][10];
+        for (int i = 0; i <2; i++) {
+            for (int j = 0; j < 10; j++) {
+                solvedPuzzles[i][j] = 0;
+            }
+        }
         duidokuWins=0;
         duidokuLosses=0;
-    }
-
-    public String getNormalSolvedPuzzles()
-    {
-        String solvedPuzzles="n";
-        for(int i=0;i<normalSolvedPuzzles.length;i++)
-        {
-            if(normalSolvedPuzzles[i]==1)
-                solvedPuzzles+=Integer.toString(i);
-        }
-        return solvedPuzzles;
-    }
-
-    public String getKillerSolvedPuzzles()
-    {
-        String solvedPuzzles="k";
-        for(int i=0;i<killerSolvedPuzzles.length;i++)
-        {
-            if(killerSolvedPuzzles[i]==1)
-                solvedPuzzles+=Integer.toString(i);
-        }
-        return solvedPuzzles;
-    }
-    private void saveUser(String name) //throws IOException
-    {
-        try {
-            myManager.addPlayer(name);
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+        //loadFromFile(); TODO i dont think it works properly for now
     }
 
     public String getName(){
         return name;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     public int getWins()
@@ -73,107 +44,57 @@ public class Player {
         return duidokuLosses;
     }
 
-
-    public void addNormalSolvedPuzzle(SudokuPuzzle puzzle) throws IOException
-    {
-        int solvedPuzzle;
-        if(puzzle.isSolved()) {
-            solvedPuzzle = puzzle.getNumberOfPuzzleInFile();  //pairnoume to noumero tou lumenou puzzle sto file
-            normalSolvedPuzzles[solvedPuzzle] = 1;
-            myManager.modifyPlayerFile(this,"solvedNormal");
-        }
-
-    }
-
-    public void addKillerSolvedPuzzle(SudokuPuzzle puzzle) throws IOException
-    {
-        int solvedPuzzle;
-        if(puzzle.isSolved()) {
-            solvedPuzzle = puzzle.getNumberOfPuzzleInFile();  //pairnoume to noumero tou lumenou puzzle sto file
-            killerSolvedPuzzles[solvedPuzzle] = 1;
-            myManager.modifyPlayerFile(this,"solvedKiller");
-        }
+    public void addSolvedPuzzle() {
 
     }
 
 
-    public boolean checkSolved(SudokuPuzzle sudoku,String type)
+    public int getNextUnsolvedPuzzle(int gameVersion)
     {
-        if(type=="killer" && killerSolvedPuzzles[sudoku.getNumberOfPuzzleInFile()] == 1)
-                return true;
-        else if(type=="normal" && normalSolvedPuzzles[sudoku.getNumberOfPuzzleInFile()]==1)
-            return true;
-        return false;
+        //TODO randomly
+        return 0; //temp value until done right, it works though, calls the 2 puzzle
     }
 
-    public int getUnsolvedPuzzle(String type)
-    {
-        int puzzle=-1;
-        if(type=="normal")
-        {
-            for(int i=0;i<normalSolvedPuzzles.length;i++)
-            {
-                if(normalSolvedPuzzles[i]==0)
-                {
-                    puzzle=i;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            for(int i=0;i<killerSolvedPuzzles.length;i++)
-            {
-                if(killerSolvedPuzzles[i]==0)
-                {
-                    puzzle=i;
-                    break;
-                }
-            }
-        }
-        return puzzle;
-    }
-
-    private void addWin()
+    public void addWin()
     {
         duidokuWins++;
-        //updateFile
     }
 
-    private void addLoss()
+    public void addLoss()
     {
         duidokuLosses++;
-        //updateFile
     }
 
-    //des an saresei kai apofasise :)
-//    public Player(String name) {//+, int gameType
-//        load(name);
-//    }
+    public void loadFromFile() {
+        try {
+            FileReader fileReader = new FileReader("players.txt");
+            Scanner sc = new Scanner(fileReader);
 
-//    // Reads player "name" from file, or initializes it to zero if not found
-////    public void load(String name) {
-////        this.name = name;
-////    }
-////
-////    //updates file, once won or lost duidoku, or completed a puzzle
-////    public void save() {
-////
-////    }
-
-
-
-
-
-
-
-
-
-    /*public boolean hasDonePuzzle(int index, int gameType){
-        return puzzlesSolved[gameType][index];
+            //The java.util.Scanner.next(String pattern) method returns the next token if it matches the pattern constructed from the
+            // specified string. If the match is successful, the scanner advances past the input that matched the pattern.
+            //opote an den uparxei to onoma den psaxnoume tipota allo
+            //TODO if username has whitespace in between, it wont work!!
+            sc.next(name); //an sunexisei, o user uparxei hdh kai fortwnoume ta dedomena tou
+            while (sc.hasNext()) { //checking the classic puzzles
+                String token = sc.next();
+                if ("Killer".equals(token)) {
+                    break; //we're going to killer puzzles now
+                }
+                solvedPuzzles[0][Integer.parseInt(token)] = 1; //converting string to integer, means that player has solved that classic puzzle
+                //puzzles will be zero-based, so p.e. first sudoku puzzle will have an index of 0.
+            }
+            while (sc.hasNext()) { //checking the killer puzzles
+                String token = sc.next();
+                if ("Duidoku".equals(token)) {
+                    break; //we're going to wins and losses of duidoku
+                }
+                solvedPuzzles[1][Integer.parseInt(token)] = 1; //converting string to integer, means that player has solved that killer puzzle
+            }
+            duidokuWins = sc.nextInt();
+            duidokuLosses = sc.nextInt();
+            sc.close();
+        } catch(Exception e) {
+            System.out.println("It was a File error in Player, probably not an existing player");
+        }//TODO finally
     }
-
-    public void setPuzzleDone(int index, int gameType){
-        puzzlesSolved[gameType][index] = true;
-    }*/
 }

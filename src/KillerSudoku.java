@@ -11,11 +11,10 @@ public class KillerSudoku extends SudokuPuzzle {
     private int[] regionSum; //pinakas me to sum pou exei h kathe perioxi
     private int[] regionColor; //to xroma tis kathe perioxis se arithmos (endeiktika 1 yellow, 2 green, 3 blue, 4 red)
 
-    public KillerSudoku(Integer[][] fileGrid) {
-        super(9, fileGrid);
-
-
-
+    public KillerSudoku(int numberOfGame) {
+        super(9);
+        System.out.println("Killer Sudoku constructor");
+        loadFromFile(numberOfGame);
     }
 
 
@@ -82,27 +81,39 @@ public class KillerSudoku extends SudokuPuzzle {
     }
 
     @Override
-    public void loadFromFile(){
+    public void loadFromFile(int numberOfGame) {
         try{
-            FileReader fileReader = new FileReader("C:\\Users\\user\\IdeaProjects\\sudoku-3324_3374\\src\\Killer1.txt");
+            FileReader fileReader = new FileReader("Killer1.txt");
             Scanner sc = new Scanner(fileReader);
-            regionNum = 0;
-            for (int i = 0; i < dimension; i++) {
-                for (int j = 0; j < dimension; j++){
-                    int tmp = sc.nextInt();
-                    regionIndex[i][j] = tmp;
-                    System.out.println(regionIndex[i][j]);
-                    if (tmp > regionNum){
-                        regionNum = tmp;
+            int numberOfTotalPuzzlesInFile = sc.nextInt();
+            for (int p = 0; p < numberOfTotalPuzzlesInFile; p++) {
+                regionNum = 0;
+                for (int i = 0; i < dimension; i++) {
+                    for (int j = 0; j < dimension; j++) {
+                        int tmp = sc.nextInt();
+                        if (numberOfGame == p) {
+                            regionIndex[i][j] = tmp;
+                            System.out.print(regionIndex[i][j] + "\t");
+                        }
+                        if (tmp > regionNum) {
+                            regionNum = tmp;
+                        }
+                    }
+                    if (numberOfGame == p) {
+                        System.out.println();
                     }
                 }
-            }
-            regionNum++;
-            regionColor = new int[regionNum];
-            regionSum = new int[regionNum];
-            for (int i = 0; i < regionNum; i++){
-                regionColor[i] = sc.nextInt();
-                regionSum[i] = sc.nextInt();
+                regionNum++;
+                regionColor = new int[regionNum];
+                regionSum = new int[regionNum];
+                for (int i = 0; i < regionNum; i++) {
+                    regionColor[i] = sc.nextInt();
+                    regionSum[i] = sc.nextInt();
+                }
+                // Stop reading when puzzle is found :)
+                if (numberOfGame == p) {
+                    break;
+                }
             }
             sc.close();
         }catch(Exception e){
