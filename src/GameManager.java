@@ -1,3 +1,4 @@
+import javax.jws.soap.SOAPBinding;
 import java.io.*;
 import java.util.Random;
 import java.util.Scanner;
@@ -5,11 +6,11 @@ import java.util.Scanner;
 public class GameManager
 {
 
-    IOManager manager;
-    Player player;
-    boolean loggedIn;
+    private IOManager manager;
+    private Player player;
+    private boolean loggedIn;
 
-    public GameManager()
+    public GameManager() throws IOException
     {
         manager=new IOManager();
     }
@@ -31,35 +32,45 @@ public class GameManager
     }
 
     // tha apofasizei k pooio puzzle tha fortwnei
-    public String[] loadPuzzle() throws FileNotFoundException {
-        int noPuzzle;
-        int low=1;
-        int high=10;
-        String [] puzzle=new String[81];
-        File file;
-
-        if(!loggedIn) //if no user is logged in a random puzzle is chosen
+    public int[][] loadNormalPuzzle( InputStream in, SudokuPuzzle sudoku, String type) throws FileNotFoundException {
+        int temp;
+        int noOfPuzzle=-1;
+        int wantedPuzzle;
+        int low=0;
+        int high=9;
+        int [][] puzzle= new int[9][9];
+        File file = new File("C:\\Users\\Oxi reman KALA\\IdeaProjects\\sudoku-3324_3374\\src\\Normal.txt");
+        //if no user is logged in a random puzzle is chosen
+        //wanted puzzle from 1 to 10
+        Random r=new Random();
+        wantedPuzzle=r.nextInt(high-low)+low;
+        if(loggedIn)
         {
-            Random r=new Random();
-            noPuzzle=r.nextInt(high-low)+low;
-            file =new File("C:\\Users\\Oxi reman KALA\\IdeaProjects\\sudoku-3324_3374\\src\\sudokuPuzzle1.txt");
-
-        }
-        else
-        {
-            noPuzzle=player.getNextUnsolvedPuzzle();
-            if(noPuzzle==-1)
+            if(player.checkSolved(sudoku,type))
             {
-                //user has solved all puzzles maybe load random puzzle instead??
+                temp=player.getUnsolvedPuzzle(type);
+                if(temp==-1)
+                    System.out.println("Player has solved all puzzles so an already solved puzzle is loading");
+                else
+                    wantedPuzzle=temp;
             }
-            file=new File("C:\\Users\\Oxi reman KALA\\IdeaProjects\\sudoku-3324_3374\\src\\sudokuPuzzle1.txt");
         }
+        sudoku.setNumberOfPuzzleInFile(wantedPuzzle);
         Scanner sc=new Scanner(file);
-        while(sc.hasNextLine())
-        {
-            for(int i=0;i<81;i++)
-                puzzle[i]=sc.nextLine();
+        while(noOfPuzzle!=wantedPuzzle) {
+            if (sc.hasNextLine() && sc.nextLine()!=".") {
+                for (int row = 0; row < puzzle.length; row++) {
+                    String line = sc.nextLine();
+                    for (int col = 0; col < puzzle[row].length; col++) {
+                        puzzle[row][col] = Integer.parseInt(String.valueOf(line.charAt(col)));
+                    }
+                }
+            }
+            else
+                noOfPuzzle++;
         }
         return puzzle;
     }
+
 }
+

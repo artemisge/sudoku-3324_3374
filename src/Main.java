@@ -13,7 +13,12 @@ public class Main {
                 test2[i][j] = 5;
             }
         }
-        GUI myGui=new GUI(2, test2);
-        //KillerSudoku ks = new KillerSudoku(test);
+        try {
+            GUI myGui = new GUI(2, test2);
+            //KillerSudoku ks = new KillerSudoku(test);
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

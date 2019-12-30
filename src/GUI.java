@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static java.awt.Color.CYAN;
@@ -24,7 +25,7 @@ public class GUI extends JFrame implements ActionListener
     private JButton clearAll;
     private boolean loggedIn = false;
 
-    public GUI(int gameVersion,Integer[][] array)
+    public GUI(int gameVersion,Integer[][] array)  throws IOException
     {
         this.array = array.clone();
         manager=new GameManager();
@@ -33,7 +34,7 @@ public class GUI extends JFrame implements ActionListener
     }
 
     //makes the main window for the game
-    private void makeFrame(int gameVersion)
+    private void makeFrame(int gameVersion) throws IOException
     {
         //code for the main frame
         setTitle("Sudoku");
@@ -146,7 +147,7 @@ public class GUI extends JFrame implements ActionListener
 
     }
 
-    private void createMenuBar()
+    private void createMenuBar() throws IOException
     {
         //menu bar with the options
         JMenuBar menu=new JMenuBar();
@@ -195,7 +196,7 @@ public class GUI extends JFrame implements ActionListener
 
                 String username=JOptionPane.showInputDialog(getContentPane(),"Username",null);
                 //check if user exists in file if not
-                Player player=new Player(username);
+                //Player player=new Player(username);
                 //checks if player has solved current puzzle if not createPuzzle()
                 loggedIn=true;
             }
@@ -245,7 +246,7 @@ public class GUI extends JFrame implements ActionListener
         }
     }
 
-    private void createPuzzle(int gameVersion)
+    public void createPuzzle(int gameVersion)
     {
         if (gameVersion == 0){
             dimension = 9;
@@ -253,9 +254,11 @@ public class GUI extends JFrame implements ActionListener
             puzzle = new NormalSudoku(array);
         }else if (gameVersion == 1){
             dimension = 9;
+            //load puzzle
             puzzle = new KillerSudoku(array);
         }else {
             dimension = 4;
+            //load puzzle
             puzzle = new Duidoku(array);
         }
     }

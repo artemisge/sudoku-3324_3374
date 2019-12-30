@@ -7,6 +7,17 @@ public class SudokuPuzzle {
     protected Integer[][] grid;
     protected int dimension;
     protected int elementsAdded;
+    private int numberOfPuzzleInFile;
+
+
+    public void setNumberOfPuzzleInFile(int numberOfPuzzleInFile) {
+        this.numberOfPuzzleInFile = numberOfPuzzleInFile;
+    }
+
+    public int getNumberOfPuzzleInFile()
+    {
+        return numberOfPuzzleInFile;
+    }
 
     //this will load from files a puzzle and initialize accordingly
     public SudokuPuzzle(int dimension, Integer[][] fileGrid) {
