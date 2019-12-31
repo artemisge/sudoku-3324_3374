@@ -5,38 +5,39 @@ import java.util.Scanner;
 
 public class KillerSudoku extends SudokuPuzzle {
 
-    private int[][] regionIndex = new int[getDimension()][getDimension()];//kathe cell, se poia perioxi anikei.
+    protected int[][] regionIndex = new int[getDimension()][getDimension()];//kathe cell, se poia perioxi anikei.
     // ...px to 1o cell anikei stin perioxi 0
-    private int regionNum; //to plhthos ton perioxon pou uparxoun
-    private int[] regionSum; //pinakas me to sum pou exei h kathe perioxi
-    private int[] regionColor; //to xroma tis kathe perioxis se arithmos (endeiktika 1 yellow, 2 green, 3 blue, 4 red)
+    protected int regionNum; //to plhthos ton perioxon pou uparxoun
+    protected int[] regionSum; //pinakas me to sum pou exei h kathe perioxi
+    protected int[] regionColor; //to xroma tis kathe perioxis se arithmos (endeiktika 1 yellow, 2 green, 3 blue, 4 red)
 
     public KillerSudoku(int numberOfGame) {
         super(9);
         System.out.println("Killer Sudoku constructor");
         loadFromFile(numberOfGame);
+
     }
 
 
     public boolean isSumOk(int row, int col, int value){
         boolean ok = false;
-        int cellsFilled = 0;
-        int cells = 0;
-        int region = regionIndex[row][col];
-        int sum = 0;
-        for (int i = 0; i < regionNum; i++){
-            for (int j = 0; j < regionNum; j++){
+        int cellsFilled = 0; //filled number of cells in the same region
+        int totalCells = 0; //total number of cells in the same region
+        int region = regionIndex[row][col]; //in which region the cell is
+        int sum = 0; //sum of all cells in the same region up to now
+        for (int i = 0; i < dimension; i++){
+            for (int j = 0; j < dimension; j++){
                 if (regionIndex[i][j] == region){
                     sum += grid[i][j];
-                    cells++;
+                    totalCells++;
                     if (grid[i][j] != 0){
                         cellsFilled++;
                     }
                 }
             }
         }
-        if ((sum + value == regionSum[region]) && (cellsFilled + 1 == cells)
-                || (sum + value < regionSum[region]) && (cellsFilled + 1 < cells)){
+        if ((sum + value == regionSum[region]) && (cellsFilled + 1 == totalCells)
+                || (sum + value < regionSum[region]) && (cellsFilled + 1 < totalCells)){
             ok = true;
             //to athroisma einai teleio me ola ta kelia sumpliromena h ta kelia den exoun
             //sumplirothei kai to athroisma tous den kseperna to apaitoumeno athroisma
@@ -55,7 +56,7 @@ public class KillerSudoku extends SudokuPuzzle {
     }
 
 
-    private boolean isAllSumOk(){
+    private boolean isAllSumOk(){ //to check if game is finished
         for (int i = 0; i < regionNum; i++){
             //gia kathe perioxi
             int sum =0;
@@ -87,7 +88,7 @@ public class KillerSudoku extends SudokuPuzzle {
             Scanner sc = new Scanner(fileReader);
             int numberOfTotalPuzzlesInFile = sc.nextInt();
             for (int p = 0; p < numberOfTotalPuzzlesInFile; p++) {
-                regionNum = 0;
+                regionNum = 0; //ksekina apo 0 kai kathe fora pou briskei kai alli perioxi auxanetai
                 for (int i = 0; i < dimension; i++) {
                     for (int j = 0; j < dimension; j++) {
                         int tmp = sc.nextInt();
