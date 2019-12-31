@@ -20,6 +20,7 @@ public class GUI extends JFrame implements ActionListener
     private JButton clearAll;
     private JLabel userLabel;
     private JCheckBox help;
+    private JCheckBox wordoku;
     private GameManager gm;
 
     public GUI()
@@ -55,26 +56,9 @@ public class GUI extends JFrame implements ActionListener
 
     private void createGamePanel(int gameVersion) {
         //panel inside the main panel for sudoku grid buttons, will be on the left
-        JPanel gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(gm.puzzle.dimension, gm.puzzle.dimension));
-        gridPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        gridPanel.setPreferredSize(new Dimension(500, 500));
+        game.removeAll(); //in case for a new game, it clears everything
 
-        grid = new JButton[gm.puzzle.dimension][gm.puzzle.dimension];
-        //initializing grid[][] and setting text to buttons
-        for(int i = 0; i < gm.puzzle.dimension; i++){
-            for(int j = 0; j < gm.puzzle.dimension; j++){
-                grid[i][j] = new JButton("");
-                grid[i][j].addActionListener(this);
-                convertGridNumber(grid[i][j], i , j);
-                gridPanel.add(grid[i][j]);
-            }
-        }
-        colorButtons(); //colors the grid buttons
-        //TODO color the grid properly if it is a killer sudoku
-        game.add(gridPanel, BorderLayout.WEST);
-
-        //another panel inside of the main panel for
+        //a panel inside of the main panel for
         // the options, help check box and number buttons
         //will be on the right
         eastPanel = new JPanel();
@@ -97,6 +81,26 @@ public class GUI extends JFrame implements ActionListener
 
         game.add(eastPanel, BorderLayout.EAST);
 
+        //west panel, for buttons-grid
+        JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(gm.puzzle.dimension, gm.puzzle.dimension));
+        gridPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        gridPanel.setPreferredSize(new Dimension(500, 500));
+
+        grid = new JButton[gm.puzzle.dimension][gm.puzzle.dimension];
+        //initializing grid[][] and setting text to buttons
+        for(int i = 0; i < gm.puzzle.dimension; i++){
+            for(int j = 0; j < gm.puzzle.dimension; j++){
+                grid[i][j] = new JButton("");
+                grid[i][j].addActionListener(this);
+                convertGridNumber(grid[i][j], i , j);
+                gridPanel.add(grid[i][j]);
+            }
+        }
+        colorButtons(); //colors the grid buttons
+        //TODO color the grid properly if it is a killer sudoku
+        game.add(gridPanel, BorderLayout.WEST);
+        game.revalidate(); //something like an update for the panel
     }
 
     //these are the panels for each game Version. They need to be distinguished
@@ -110,7 +114,8 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 50, 5);
         eastPanel.add(clearAll, constraints);
 
-        JCheckBox wordoku = new JCheckBox("Wordoku");
+        wordoku = new JCheckBox("Wordoku");
+        wordoku.addActionListener(this);
         constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.gridwidth = 3;
@@ -146,10 +151,6 @@ public class GUI extends JFrame implements ActionListener
     }
 
     private void killerEastPanel(GridBagConstraints constraints) {
-
-        //TODO fix this one for Killer Sudoku:
-//        String html="<html><small>%s</small><br><center><big>&nbsp;&nbsp;&nbsp;%d&nbsp;&nbsp;&nbsp;</big><br><small>&nbsp;</small>";
-//        JButton b3 = new JButton(String.format(html, "15", 9));
 
         clearAll = new JButton("Clear All");
         clearAll.addActionListener(this);
@@ -188,7 +189,8 @@ public class GUI extends JFrame implements ActionListener
     }
 
     private void duidokuEastPanel(GridBagConstraints constraints) {
-        JCheckBox wordoku = new JCheckBox("Wordoku");
+        wordoku = new JCheckBox("Wordoku");
+        wordoku.addActionListener(this);
         constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.gridwidth = 3;
@@ -233,6 +235,7 @@ public class GUI extends JFrame implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(0);
+                createGamePanel(0);
             }
         });
         JMenuItem killer=new JMenuItem("Killer");
@@ -240,6 +243,7 @@ public class GUI extends JFrame implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(1);
+                createGamePanel(1);
             }
         });
         JMenuItem duidoku=new JMenuItem("Duidoku");
@@ -247,6 +251,7 @@ public class GUI extends JFrame implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(2);
+                createGamePanel(2);
             }
         });
         newGame.add(classic);
@@ -299,12 +304,8 @@ public class GUI extends JFrame implements ActionListener
     //returns the equivalent char version of the number that is saved in grid[i][j]
     //boolean letters is to add or not the ascii value to convert to letters. true for letters, false for numbers
     private void convertGridNumber(JButton button, int row, int col) {
-        //TODO wordoku checkbox
-        //Integer add = wordoku.isSelected()? 65-49: 0;
-        // 65 is the decimal value of "A" character and 45 is the decimal value of "1" character
-
         try {
-            if ( gm.puzzle.grid[row][col] == 0){
+            if ( gm.puzzle.grid[row][col] == 0) {
                 if (gm.puzzle instanceof KillerSudoku) {
                     button.setMargin(new Insets(0, 0, 0, 0));
                     button.setText(String.format("<html><small>%s</small><br><center style='width: 50'><big>%s</big><br><small>&nbsp;</small>",
@@ -312,18 +313,24 @@ public class GUI extends JFrame implements ActionListener
                 } else {
                     button.setText("");
                 }
-            } else{
+            } else {
                 if (gm.puzzle instanceof KillerSudoku) {
                     button.setMargin(new Insets(0, 0, 0, 0));
                     button.setText(String.format("<html><small>%s</small><br><center style='width: 50'><big>%s</big><br><small>&nbsp;</small>",
                             ((KillerSudoku) gm.puzzle).regionSum[((KillerSudoku) gm.puzzle).regionIndex[row][col]], gm.puzzle.grid[row][col]));
                 } else {
+                    String d;
+                    if (wordoku.isSelected()) {
+                        d = Character.toString(gm.puzzle.grid[row][col]-1 + (int) 'A');
+                    } else {
+                        d = Integer.toString(gm.puzzle.grid[row][col]);
+                    }
                     button.setMargin(new Insets(0, 0, 0, 0));
-                    button.setText(String.format("<html><small>%s</small><br><center style='width: 50'><big>%s</big><br><small>&nbsp;</small>", "", gm.puzzle.grid[row][col]));
+                    button.setText(String.format("<html><small>%s</small><br><center style='width: 50'><big>%s</big><br><small>&nbsp;</small>", "", d));
                 }
             }
-        }catch (Throwable e){
-            System.out.println("Exception");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -387,6 +394,10 @@ public class GUI extends JFrame implements ActionListener
 //  will use the variable clickedValue to assign a value to the grid
     public void actionPerformed(ActionEvent e) {
         JComponent src = (JComponent) e.getSource(); //JComponent is a super class of JButton and JCheckBox
+
+        if (src == wordoku) {
+            updateGrid();
+        }
 
         if (!help.isSelected() && src == help) {
             System.out.println("Help is disabled");
