@@ -1,11 +1,11 @@
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 
-public class Player {
+public class Player implements Serializable { //Serializable has to do with file parsing
+
+    //default serialVersion id (serializable shit)
+    private static final long serialVersionUID = 1L;
 
     private String name;
     private int duidokuWins;
@@ -13,10 +13,13 @@ public class Player {
     private int[] solvedNormalPuzzles;
     private int[] solvedKillerPuzzles;
 
+
     public Player(String name) {
+        this.name = name;
         solvedNormalPuzzles=new int[10];
         solvedKillerPuzzles=new int[10];
-        loadFromFile(name);
+        duidokuWins = 0;
+        duidokuLosses = 0;
     }
 
     public String getName(){
@@ -60,83 +63,73 @@ public class Player {
         duidokuLosses++;
     }
 
-    public void loadFromFile(String name) {
-        this.name = name;
-        //initializing everything from scratch
-        for (int i = 0; i < 10; i++) {
-            solvedNormalPuzzles[i] = 0;
-            solvedKillerPuzzles[i] = 0;
+    public void updateFile() {
+
+        if (!name.equals("")) { //saved only if player has logged in or uses a nickname other than ""
+            ArrayList<Player> players;
+
+            try { //diabazoume to arxeio kai ftiaxnoume ena arraylist kai an
+                // den uparxei to arxeio ftiaxnoume ena keno arraylist
+                FileInputStream fileIn = new FileInputStream("players.bin");
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+                players = (ArrayList<Player>) objectIn.readObject();
+            } catch (Exception e) {
+                players = new ArrayList<Player>();
+            }
+            for (Player p : players) {
+                if (p.name.equals(this.name)) {
+                    players.remove(p);
+                    break; //removing the old stats
+                }
+            }
+            players.add(this); //adding the updated stats
+            try {
+                FileOutputStream fileOut = new FileOutputStream("players.bin");
+                ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+                objectOut.writeObject(players);
+                objectOut.close();
+                System.out.println("The file has been updated");
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
+    }
+
+    public void readFromFile(String name) {
+
+        this.name = name;
+        solvedNormalPuzzles=new int[10];
+        solvedKillerPuzzles=new int[10];
+        duidokuWins = 0;
+        duidokuLosses = 0;
         try {
-            FileReader fileReader = new FileReader("players.txt");
-            Scanner sc = new Scanner(fileReader);
 
-            //The java.util.Scanner.next(String pattern) method returns the next token if it matches the pattern constructed from the
-            // specified string. If the match is successful, the scanner advances past the input that matched the pattern.
-            //opote an den uparxei to onoma den psaxnoume tipota allo, kai pigainoume sto catch, opou kanoume initialize ta wins/losses.
-            //TODO if username has whitespace in between, it wont work!!
-            sc.next(name); //an sunexisei, o user uparxei hdh kai fortwnoume ta dedomena tou
-            while (sc.hasNext()) { //checking the classic puzzles
-                String token = sc.next();
-                if ("Killer".equals(token)) {
-                    break; //we're going to killer puzzles now
+            FileInputStream fileIn = new FileInputStream("players.bin");
+            ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+            ArrayList<Player> players = new ArrayList<Player>();
+            players = (ArrayList<Player>)objectIn.readObject();
+
+            System.out.println("Scanning the file for the player");
+            objectIn.close();
+            boolean scan = false;
+            for (Player p : players) {
+                if (p.name.equals(this.name)) {
+                    System.out.println("Player already registered. Uploading data...");
+                    scan = true; //this is for the message of creating new player down below. probably there is a better way of checking this.. :P
+                    this.duidokuWins = p.duidokuWins;
+                    this.duidokuLosses = p.duidokuLosses;
+                    this.solvedNormalPuzzles = p.solvedNormalPuzzles;
+                    this.solvedKillerPuzzles = p.solvedKillerPuzzles;
+                    break;
                 }
-                solvedNormalPuzzles[Integer.parseInt(token)] = 1; //converting string to integer, means that player has solved that classic puzzle
-                //puzzles will be zero-based, so p.e. first sudoku puzzle will have an index of 0.
             }
-            while (sc.hasNext()) { //checking the killer puzzles
-                String token = sc.next();
-                if ("Duidoku".equals(token)) {
-                    break; //we're going to wins and losses of duidoku
-                }
-                solvedKillerPuzzles[Integer.parseInt(token)] = 1; //converting string to integer, means that player has solved that killer puzzle
+            if (!scan){
+                System.out.println("Player wasn't found in the file. Creating new player...");
             }
-            duidokuWins = sc.nextInt();
-            duidokuLosses = sc.nextInt();
-            sc.close();
-        } catch(Exception e) {
-            System.out.println("It was a File error in Player, probably not an existing player, so i'll initialize one");
-            duidokuWins=0;
-            duidokuLosses=0;
-        }//TODO finally
-    }
 
-    public void readFromFile() {
-
-    }
-
-    public void saveToFile() {
-//        try {
-//            FileReader fileReader = new FileReader("players.txt");
-//            Scanner sc = new Scanner(fileReader);
-//
-//            //The java.util.Scanner.next(String pattern) method returns the next token if it matches the pattern constructed from the
-//            // specified string. If the match is successful, the scanner advances past the input that matched the pattern.
-//            //opote an den uparxei to onoma den psaxnoume tipota allo
-//            //TODO if username has whitespace in between, it wont work!!
-//            sc.next(name); //an sunexisei, o user uparxei hdh kai fortwnoume ta dedomena tou
-//            while (sc.hasNext()) { //checking the classic puzzles
-//                String token = sc.next();
-//                if ("Killer".equals(token)) {
-//                    break; //we're going to killer puzzles now
-//                }
-//                solvedNormalPuzzles[Integer.parseInt(token)] = 1; //converting string to integer, means that player has solved that classic puzzle
-//                //puzzles will be zero-based, so p.e. first sudoku puzzle will have an index of 0.
-//            }
-//            while (sc.hasNext()) { //checking the killer puzzles
-//                String token = sc.next();
-//                if ("Duidoku".equals(token)) {
-//                    break; //we're going to wins and losses of duidoku
-//                }
-//                solvedKillerPuzzles[Integer.parseInt(token)] = 1; //converting string to integer, means that player has solved that killer puzzle
-//            }
-//            duidokuWins = sc.nextInt();
-//            duidokuLosses = sc.nextInt();
-//            sc.close();
-//        } catch(Exception e) {
-//            System.out.println("It was a File error in Player, probably not an existing player, so i'll initialize one");
-//            duidokuWins=0;
-//            duidokuLosses=0;
-//        }//TODO finally
+        } catch (Exception ex) {
+            System.out.println("File didn't exist");
+        }
     }
 }

@@ -1,10 +1,15 @@
+import javafx.scene.shape.Line;
+
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.awt.Color.*;
 import static java.lang.Math.sqrt;
@@ -15,13 +20,14 @@ public class GUI extends JFrame implements ActionListener
     private JPanel eastPanel;
     private JButton[][] grid;  //the grid constructed with buttons
     private int clickedValue = -1;
-    private JButton numbers[];
+    private JButton[] numbers;
     private JButton clearBox;
     private JButton clearAll;
     private JLabel userLabel;
+    private JLabel invalidLabel;
     private JCheckBox help;
     private JCheckBox wordoku;
-    private GameManager gm;
+    protected GameManager gm; //protected for testing
 
     public GUI()
     {
@@ -75,11 +81,17 @@ public class GUI extends JFrame implements ActionListener
 
         constraints.insets = new Insets(50, 5, 5, 5);
         constraints.gridx = 0;
-        constraints.gridy = 8;
-        constraints.gridwidth = 7;
+        constraints.gridy = 10;
+        constraints.gridwidth = 10;
         eastPanel.add(userLabel, constraints);
 
-        game.add(eastPanel, BorderLayout.EAST);
+        invalidLabel = new JLabel(" ");
+        constraints.gridx = 0;
+        constraints.gridy = 11;
+        constraints.gridwidth = 10;
+        eastPanel.add(invalidLabel, constraints);
+
+        game.add(eastPanel, BorderLayout.CENTER);
 
         //west panel, for buttons-grid
         JPanel gridPanel = new JPanel();
@@ -98,7 +110,6 @@ public class GUI extends JFrame implements ActionListener
             }
         }
         colorButtons(); //colors the grid buttons
-        //TODO color the grid properly if it is a killer sudoku
         game.add(gridPanel, BorderLayout.WEST);
         game.revalidate(); //something like an update for the panel
     }
@@ -108,7 +119,7 @@ public class GUI extends JFrame implements ActionListener
     private void classicEastPanel(GridBagConstraints constraints) {
         clearAll = new JButton("Clear All");
         clearAll.addActionListener(this);
-        constraints.gridx = 0;
+        constraints.gridx = 3;
         constraints.gridy = 0;
         constraints.gridwidth = 3;
         constraints.insets = new Insets(5, 5, 50, 5);
@@ -116,7 +127,7 @@ public class GUI extends JFrame implements ActionListener
 
         wordoku = new JCheckBox("Wordoku");
         wordoku.addActionListener(this);
-        constraints.gridx = 0;
+        constraints.gridx = 3;
         constraints.gridy = 3;
         constraints.gridwidth = 3;
         constraints.insets = new Insets(5, 5, 5, 5);
@@ -124,7 +135,7 @@ public class GUI extends JFrame implements ActionListener
 
         help = new JCheckBox("Help");
         help.addActionListener(this);
-        constraints.gridx = 0;
+        constraints.gridx = 3;
         constraints.gridy = 4;
         constraints.gridwidth = 3;
         constraints.insets = new Insets(5, 5, 5, 5);
@@ -144,7 +155,7 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 5, 5);
         clearBox = new JButton("Clear Box");
         clearBox.addActionListener(this);
-        constraints.gridx = 0;
+        constraints.gridx = 3;
         constraints.gridy = 7;
         constraints.gridwidth = 3;
         eastPanel.add(clearBox, constraints);
@@ -154,7 +165,7 @@ public class GUI extends JFrame implements ActionListener
 
         clearAll = new JButton("Clear All");
         clearAll.addActionListener(this);
-        constraints.gridx = 0;
+        constraints.gridx = 3;
         constraints.gridy = 0;
         constraints.gridwidth = 3;
         constraints.insets = new Insets(5, 5, 50, 5);
@@ -162,7 +173,7 @@ public class GUI extends JFrame implements ActionListener
 
         help = new JCheckBox("Help");
         help.addActionListener(this);
-        constraints.gridx = 0;
+        constraints.gridx = 3;
         constraints.gridy = 4;
         constraints.gridwidth = 3;
         constraints.insets = new Insets(5, 5, 5, 5);
@@ -182,18 +193,29 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 5, 5);
         clearBox = new JButton("Clear Box");
         clearBox.addActionListener(this);
-        constraints.gridx = 0;
+        constraints.gridx = 3;
         constraints.gridy = 7;
         constraints.gridwidth = 3;
         eastPanel.add(clearBox, constraints);
     }
 
     private void duidokuEastPanel(GridBagConstraints constraints) {
+        String  sText  = "<html>Win your opponent by making <br> the last valid move on the game.</html>";
+        JLabel duidokuLabel = new JLabel(sText);
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.gridwidth = 10;
+        constraints.gridheight = 2;
+        constraints.insets = new Insets(5, 5, 50, 5);
+        eastPanel.add(duidokuLabel, constraints);
+
         wordoku = new JCheckBox("Wordoku");
         wordoku.addActionListener(this);
         constraints.gridx = 0;
         constraints.gridy = 3;
-        constraints.gridwidth = 3;
+        constraints.gridwidth = 9;
+        //constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridheight = 1;
         constraints.insets = new Insets(5, 5, 5, 5);
         eastPanel.add(wordoku, constraints);
 
@@ -201,17 +223,19 @@ public class GUI extends JFrame implements ActionListener
         help.addActionListener(this);
         constraints.gridx = 0;
         constraints.gridy = 4;
-        constraints.gridwidth = 3;
+        constraints.gridwidth = 9;
+        //constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.insets = new Insets(5, 5, 5, 5);
         eastPanel.add(help, constraints);
 
         constraints.gridwidth = 1;
+        //constraints.fill = GridBagConstraints.PAGE_END;
         constraints.insets = new Insets(50, 2, 5, 2);
         numbers = new JButton[gm.puzzle.dimension];
         for (int i = 1; i < gm.puzzle.dimension+1; i++){
             numbers[i-1] = new JButton(Integer.toString(i));
             numbers[i-1].addActionListener(this);
-            constraints.gridx = i-1;
+            constraints.gridx = 3+i-1;
             constraints.gridy = 5;
             eastPanel.add(numbers[i-1], constraints);
         }
@@ -267,8 +291,15 @@ public class GUI extends JFrame implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = JOptionPane.showInputDialog(getContentPane(),"Username","");
-                gm.player.loadFromFile(username);
-                userLabel.setText("You are logged as " + gm.player.getName());
+                if (username != null){ //handling cancel case
+                    gm.player.readFromFile(username);
+                    gm.player.updateFile();
+                    if (!username.equals("")) {
+                        userLabel.setText("You are logged as " + gm.player.getName());
+                    } else {
+                        userLabel.setText("You haven't logged in, your stats won't be saved");
+                    }
+                }
             }
         });
         menuOptions.add(logIn);
@@ -353,7 +384,6 @@ public class GUI extends JFrame implements ActionListener
             for (int i = 0; i < gm.puzzle.dimension; i++) { //gia kathe cell sto grid
                 for (int j = 0; j < gm.puzzle.dimension; j++) {
                     int clr = ((KillerSudoku) gm.puzzle).regionColor[((KillerSudoku) gm.puzzle).regionIndex[i][j]]; //to xroma (regionColor) pou brisketai stin perioxi pou eimaste tora (grid[i][j]), anaparistatai se arithmo.
-                    System.out.println(clr);
                     Color c;
                     switch (clr) {
                         case 1:
@@ -456,10 +486,20 @@ public class GUI extends JFrame implements ActionListener
                                     //TODO if last move was yours -> win++
                                     //else loss++
                                 }
+                                gm.player.updateFile();
                             }
                         } else {
+                            invalidLabel.setText("Invalid move");
                             System.out.println("invalid move");
-                            //TODO put that in timer Jlabel
+                            Timer timer = new Timer();
+                            TimerTask task = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    invalidLabel.setText(" ");
+                                }
+                            };
+                            timer.schedule(task, 2000);
+
                         }
                         if (help.isSelected()) {
                             helpFunction();

@@ -94,15 +94,15 @@ public class KillerSudoku extends SudokuPuzzle {
                         int tmp = sc.nextInt();
                         if (numberOfGame == p) {
                             regionIndex[i][j] = tmp;
-                            System.out.print(regionIndex[i][j] + "\t");
+                            //System.out.print(regionIndex[i][j] + "\t");
                         }
                         if (tmp > regionNum) {
                             regionNum = tmp;
                         }
                     }
-                    if (numberOfGame == p) {
-                        System.out.println();
-                    }
+//                    if (numberOfGame == p) {
+//                        System.out.println();
+//                    }
                 }
                 regionNum++;
                 regionColor = new int[regionNum];
@@ -118,7 +118,7 @@ public class KillerSudoku extends SudokuPuzzle {
             }
             sc.close();
         }catch(Exception e){
-            System.out.println("It was a File Oopsie");
+            System.out.println("It was a File error in Killer");
         }//TODO finally
 
     }
