@@ -32,7 +32,7 @@ public class GUI extends JFrame implements ActionListener
     public GUI()
     {
         gm = new GameManager();
-        int gameVersion = 1; //will initialize to a classic Sudoku
+        int gameVersion = 0; //will initialize to a classic Sudoku
         makeFrame(gameVersion);
     }
 
@@ -340,7 +340,7 @@ public class GUI extends JFrame implements ActionListener
                 if (gm.puzzle instanceof KillerSudoku) {
                     button.setMargin(new Insets(0, 0, 0, 0));
                     button.setText(String.format("<html><small>%s</small><br><center style='width: 50'><big>%s</big><br><small>&nbsp;</small>",
-                            ((KillerSudoku) gm.puzzle).regionSum[((KillerSudoku) gm.puzzle).regionIndex[row][col]], ""));
+                            ((KillerSudoku) gm.puzzle).regionSum[((KillerSudoku) gm.puzzle).regionIndex[row][col]], "&nbsp;"));
                 } else {
                     button.setText("");
                 }
@@ -387,16 +387,16 @@ public class GUI extends JFrame implements ActionListener
                     Color c;
                     switch (clr) {
                         case 1:
-                            c = lightGray;
+                            c = Color.decode("#fffd98"); // lightGray;
                             break;
                         case 2:
-                            c = DARK_GRAY;
+                            c = Color.decode("#cfe799"); // DARK_GRAY;
                             break;
                         case 3:
-                            c = pink;
+                            c = Color.decode("#cbe8fa"); // pink;
                             break;
                         default:
-                            c = white;
+                            c = Color.decode("#f8cfdf"); // white;
                             break;
                     }
                     grid[i][j].setBackground(c); //xromatizei analoga ton arithmo tis perioxis
