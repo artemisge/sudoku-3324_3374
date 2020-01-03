@@ -14,6 +14,7 @@ public class NormalSudoku extends SudokuPuzzle {
 
     @Override
     public void loadFromFile(int numberOfGame) {
+        current = numberOfGame;
         try {
             FileReader fileReader = new FileReader("Normal.txt");
             Scanner sc = new Scanner(fileReader);

@@ -83,6 +83,7 @@ public class KillerSudoku extends SudokuPuzzle {
 
     @Override
     public void loadFromFile(int numberOfGame) {
+        current = numberOfGame;
         try{
             FileReader fileReader = new FileReader("Killer.txt");
             Scanner sc = new Scanner(fileReader);

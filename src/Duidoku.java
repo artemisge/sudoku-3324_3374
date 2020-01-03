@@ -1,5 +1,3 @@
-//TODO currently not in GUI.
-
 public class Duidoku extends SudokuPuzzle {
     boolean availableMoves; //will be used in isSolved() method to determine if the game is finished.
     boolean lastValidMove; //(probably there is a better way to portray this) will indicate who made the last valid move to determine the winner. false: AI made the last valid move, true: user made the last valid move.

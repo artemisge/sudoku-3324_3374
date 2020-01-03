@@ -15,7 +15,7 @@ public class Player implements Serializable { //Serializable has to do with file
 
 
     public Player(String name) {
-        initialize();
+        initialize(name);
     }
 
     public String getName(){
@@ -43,10 +43,10 @@ public class Player implements Serializable { //Serializable has to do with file
     }
 
 
-    public int getNextUnsolvedPuzzle(int type)
+    public int getNextUnsolvedPuzzle(int gameType)
     {
         int high;
-        if(type==0)
+        if(gameType==0)
             high=solvedNormalPuzzles.length-1;
         else
             high=solvedKillerPuzzles.length-1;
@@ -56,13 +56,13 @@ public class Player implements Serializable { //Serializable has to do with file
         wantedPuzzle=r.nextInt(high-low)+low;
         //setNumberOfPuzzleInFile(wantedPuzzle);
         int puzzle = wantedPuzzle;
-        if (type == 0 && solvedNormalPuzzles[wantedPuzzle]==1) {
+        if (gameType == 0 && solvedNormalPuzzles[wantedPuzzle]==1) {
             for (int i = 0; i < solvedNormalPuzzles.length; i++) {
                 if (solvedNormalPuzzles[i] == 0) {
                     return i;
                 }
             }
-        } else if(type==1 &&solvedKillerPuzzles[wantedPuzzle]==1){
+        } else if(gameType==1 &&solvedKillerPuzzles[wantedPuzzle]==1){
             for (int i = 0; i < solvedKillerPuzzles.length; i++) {
                 if (solvedKillerPuzzles[i] == 0) {
                     return i;
@@ -116,7 +116,7 @@ public class Player implements Serializable { //Serializable has to do with file
         }
     }
 
-    private  void initialize(){
+    private  void initialize(String name) {
         this.name = name;
         solvedNormalPuzzles=new int[10];
         solvedKillerPuzzles=new int[10];
@@ -126,7 +126,7 @@ public class Player implements Serializable { //Serializable has to do with file
 
     public void readFromFile(String name) {
 
-        initialize();
+        initialize(name);
         try {
 
             FileInputStream fileIn = new FileInputStream("players.bin");
