@@ -297,7 +297,7 @@ public class GUI extends JFrame implements ActionListener
                     player.readFromFile(username);
                     player.updateFile();
                     if (!username.equals("")) {
-                        userLabel.setText("You are logged as " + player.getName());
+                        userLabel.setText("You are logged in as " + player.getName());
                     } else {
                         userLabel.setText("You haven't logged in, your stats won't be saved");
                     }
