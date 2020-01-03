@@ -15,11 +15,7 @@ public class Player implements Serializable { //Serializable has to do with file
 
 
     public Player(String name) {
-        this.name = name;
-        solvedNormalPuzzles=new int[10];
-        solvedKillerPuzzles=new int[10];
-        duidokuWins = 0;
-        duidokuLosses = 0;
+        initialize();
     }
 
     public String getName(){
@@ -120,13 +116,17 @@ public class Player implements Serializable { //Serializable has to do with file
         }
     }
 
-    public void readFromFile(String name) {
-
+    private  void initialize(){
         this.name = name;
         solvedNormalPuzzles=new int[10];
         solvedKillerPuzzles=new int[10];
         duidokuWins = 0;
         duidokuLosses = 0;
+    }
+
+    public void readFromFile(String name) {
+
+        initialize();
         try {
 
             FileInputStream fileIn = new FileInputStream("players.bin");
