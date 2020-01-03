@@ -352,7 +352,7 @@ public class GUI extends JFrame implements ActionListener
                 } else {
                     String d;
                     if (wordoku.isSelected()) {
-                        d = Character.toString(gm.puzzle.grid[row][col]-1 + (int) 'A');
+                        d = Character.toString((char) (gm.puzzle.grid[row][col]-1 + (int) 'A'));
                     } else {
                         d = Integer.toString(gm.puzzle.grid[row][col]);
                     }

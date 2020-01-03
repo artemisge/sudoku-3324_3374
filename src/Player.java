@@ -47,10 +47,34 @@ public class Player implements Serializable { //Serializable has to do with file
     }
 
 
-    public int getNextUnsolvedPuzzle(int gameVersion)
+    public int getNextUnsolvedPuzzle(int type)
     {
-        //TODO randomly
-        return 1; //temp value until done right, it works though, calls the 2 puzzle
+        int high;
+        if(type==0)
+            high=solvedNormalPuzzles.length-1;
+        else
+            high=solvedKillerPuzzles.length-1;
+        int low=0;
+        int wantedPuzzle;
+        Random r=new Random();
+        wantedPuzzle=r.nextInt(high-low)+low;
+        //setNumberOfPuzzleInFile(wantedPuzzle);
+        int puzzle = wantedPuzzle;
+        if (type == 0 && solvedNormalPuzzles[wantedPuzzle]==1) {
+            for (int i = 0; i < solvedNormalPuzzles.length; i++) {
+                if (solvedNormalPuzzles[i] == 0) {
+                    return i;
+                }
+            }
+        } else if(type==1 &&solvedKillerPuzzles[wantedPuzzle]==1){
+            for (int i = 0; i < solvedKillerPuzzles.length; i++) {
+                if (solvedKillerPuzzles[i] == 0) {
+                    return i;
+                }
+            }
+        }
+        return puzzle;
+        //temp value until done right, it works though, calls the 2 puzzle
     }
 
     public void addWin()
