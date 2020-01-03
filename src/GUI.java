@@ -472,6 +472,13 @@ public class GUI extends JFrame implements ActionListener
                         if (gm.puzzle.canInsert(i, j, clickedValue)) {
                             gm.puzzle.insert(i, j, clickedValue);
                             updateGrid();
+                            if (gm.puzzle instanceof Duidoku) {
+                                ((Duidoku) gm.puzzle).lastValidMove = true; //player made a valid move
+                                //after player's turn, AI will play
+                                ((Duidoku) gm.puzzle).AI();
+                                updateGrid();
+
+                            }
                             //an kapoios kerdisei to paixnidi!!!
                             if (gm.puzzle.isSolved()) {
                                 //pop-up
@@ -482,9 +489,13 @@ public class GUI extends JFrame implements ActionListener
                                     JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you solved a Killer Sudoku. For a new game go to Options.");
                                     gm.player.addSolvedKillerPuzzle(gm.currentPuzzleNumber);
                                 } else { //duidoku
-                                    JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you won the round. For a new game go to Options.");
-                                    //TODO if last move was yours -> win++
-                                    //else loss++
+                                    if (((Duidoku) gm.puzzle).lastValidMove) {
+                                        JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you won the round! For a new game go to Options.");
+                                        gm.player.addWin(); //player made the last valid move so he won
+                                    } else {
+                                        JOptionPane.showMessageDialog(getContentPane(), "Computer won the round. For a new game go to Options.");
+                                        gm.player.addLoss(); //AI made the last valid move so user lost
+                                    }
                                 }
                                 gm.player.updateFile();
                             }
