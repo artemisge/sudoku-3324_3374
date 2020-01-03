@@ -45,32 +45,25 @@ public class Player implements Serializable { //Serializable has to do with file
 
     public int getNextUnsolvedPuzzle(int gameType)
     {
-        int high;
-        if(gameType==0)
-            high=solvedNormalPuzzles.length-1;
-        else
-            high=solvedKillerPuzzles.length-1;
-        int low=0;
+        int solvedPuzzles[];
+        if (gameType==0) {
+            solvedPuzzles = solvedNormalPuzzles;
+        } else {
+            solvedPuzzles = solvedKillerPuzzles;
+        }
         int wantedPuzzle;
-        Random r=new Random();
-        wantedPuzzle=r.nextInt(high-low)+low;
-        //setNumberOfPuzzleInFile(wantedPuzzle);
-        int puzzle = wantedPuzzle;
-        if (gameType == 0 && solvedNormalPuzzles[wantedPuzzle]==1) {
-            for (int i = 0; i < solvedNormalPuzzles.length; i++) {
-                if (solvedNormalPuzzles[i] == 0) {
-                    return i;
-                }
-            }
-        } else if(gameType==1 &&solvedKillerPuzzles[wantedPuzzle]==1){
-            for (int i = 0; i < solvedKillerPuzzles.length; i++) {
-                if (solvedKillerPuzzles[i] == 0) {
+        Random r = new Random();
+        wantedPuzzle = r.nextInt(solvedPuzzles.length);
+        if (gameType == 0 && solvedPuzzles[wantedPuzzle]==1) {
+            for (int i = 0; i < solvedPuzzles.length; i++) {
+                if (solvedPuzzles[i] == 0) {
+                    System.out.println("Puzzle chosen: " + i);
                     return i;
                 }
             }
         }
-        return puzzle;
-        //temp value until done right, it works though, calls the 2 puzzle
+        System.out.println("Puzzle chosen: " + wantedPuzzle);
+        return wantedPuzzle;
     }
 
     public void addWin()
@@ -118,6 +111,7 @@ public class Player implements Serializable { //Serializable has to do with file
 
     private  void initialize(String name) {
         this.name = name;
+        //Everything in a Java program not explicitly set to something by the programmer, is initialized to a zero value.
         solvedNormalPuzzles=new int[10];
         solvedKillerPuzzles=new int[10];
         duidokuWins = 0;
