@@ -7,13 +7,16 @@ public class KillerSudoku extends SudokuPuzzle {
 
     protected int[][] regionIndex = new int[dimension][dimension];//kathe cell, se poia perioxi anikei.
     // ...px to 1o cell anikei stin perioxi 0
-    protected int regionNum; //to plhthos ton perioxon pou uparxoun
     protected int[] regionSum; //pinakas me to sum pou exei h kathe perioxi
-    protected int[] regionColor; //to xroma tis kathe perioxis se arithmos (endeiktika 1 yellow, 2 green, 3 blue, 4 red)
+    protected int[][] regionColor; //to xroma tis kathe perioxis se arithmos (endeiktika 1 yellow, 2 green, 3 blue, 4 red)
+    protected int[][] solution; //i lusi tou puzzle, xrhsimopoihtai gia na broume ton pinaka ton athroismaton ton perioxon
 
     public KillerSudoku(int numberOfGame) {
         super(9);
         System.out.println("Killer Sudoku constructor");
+        solution = new int[9][9];
+        regionColor = new int[9][9];
+        regionIndex = new int[9][9];
         loadFromFile(numberOfGame);
 
     }
@@ -70,65 +73,112 @@ public class KillerSudoku extends SudokuPuzzle {
 
     @Override
     public void loadFromFile(int numberOfGame) {
-        current = numberOfGame;
+        current = numberOfGame; //zero based
         try{
             FileReader fileReader = new FileReader("Killer.txt");
             Scanner sc = new Scanner(fileReader);
             int numberOfTotalPuzzlesInFile = sc.nextInt();
             for (int p = 0; p < numberOfTotalPuzzlesInFile; p++) {
-                regionNum = 0; //ksekina apo 0 kai kathe fora pou briskei kai alli perioxi auxanetai
+                //solution array
+                for (int i = 0; i < dimension; i++) {
+                    for (int j = 0; j < dimension; j++) {
+                        int tmp = sc.nextInt();
+                        if (numberOfGame == p) {
+                            solution[i][j] = tmp;
+                        }
+                    }
+                }
+                //regions array
+
                 for (int i = 0; i < dimension; i++) {
                     for (int j = 0; j < dimension; j++) {
                         int tmp = sc.nextInt();
                         if (numberOfGame == p) {
                             regionIndex[i][j] = tmp;
                         }
-                        if (tmp > regionNum) {
-                            regionNum = tmp;
+                    }
+                }
+                //color array
+
+                for (int i = 0; i < dimension; i++) {
+                    for (int j = 0; j < dimension; j++) {
+                        int tmp = sc.nextInt();
+                        if (numberOfGame == p) {
+                            regionColor[i][j] = tmp;
                         }
                     }
                 }
-                regionNum++;
-                regionColor = new int[regionNum];
-                regionSum = new int[regionNum];
-                for (int i = 0; i < regionNum; i++) {
-                    regionColor[i] = sc.nextInt();
-                    regionSum[i] = sc.nextInt();
-                }
                 // Stop reading when puzzle is found :)
-                if (numberOfGame == p) {
+                if (current == p) {
+                    sumArray();
                     break;
                 }
             }
             sc.close();
-        }catch(Exception e){
+        } catch(Exception e) {
             System.out.println("It was a File error in Killer");
         }//TODO finally
 
     }
 
     /**
-     * checks if tha game is finished by checking if all needed sums in regions are ok.
+     * checks if the game is finished by checking if all needed sums in regions are ok.
      * @return
      */
     @Override
     public boolean isSolved() {
-        for (int i = 0; i < regionNum; i++){
-            //gia kathe perioxi
-            int sum =0;
-            for (int j = 0; j < dimension; j++){
-                for (int k = 0; k < dimension; k++){
-                    if (regionIndex[j][k] == i){
-                        sum += grid[j][k];
-                    }
-                }
-
-            }
-            if (sum != regionSum[i]){
-                return false;
-            }
-        }
-        return true;
+        return super.isSolved();
+//        for (int i = 0; i < regionNum; i++){
+//            //gia kathe perioxi
+//            int sum = 0;
+//            for (int j = 0; j < dimension; j++){
+//                for (int k = 0; k < dimension; k++){
+//                    if (regionIndex[j][k] == i){
+//                        sum += grid[j][k];
+//                    }
+//                }
+//
+//            }
+//            if (sum != regionSum[i]){
+//                return false;
+//            }
+//        }
+//        return true;
     }
 
+    /**
+     * taken the puzzle solution and the regions, calculates the sum of  each region
+     */
+    private void sumArray() {
+        int regionNum = max(regionIndex) + 1; //total number of regions in this puzzle
+        //initialize array
+        regionSum = new int[regionNum];
+        for (int i = 0; i < regionNum; i++) {
+            regionSum[i] = 0;
+        }
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                regionSum[regionIndex[i][j]] += solution[i][j];
+            }
+        }
+    }
+
+    /**
+     * taken the regions, calculates the color for each region
+     */
+    private void colorArray() {
+
+    }
+
+    private int max(int[][] regionIndex) {
+        int max = 0;
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                if (regionIndex[i][j] > max) {
+                    max = regionIndex[i][j];
+                }
+            }
+        }
+        return max;
+     }
 }

@@ -437,20 +437,23 @@ public class GUI extends JFrame implements ActionListener
         //colors sum-regions differently
         for (int i = 0; i < puzzle.dimension; i++) { //for every cell in grid
             for (int j = 0; j < puzzle.dimension; j++) {
-                int clr = ((KillerSudoku) puzzle).regionColor[((KillerSudoku) puzzle).regionIndex[i][j]]; //the color (regionColor) of the region we are now (grid[i][j]), represented by a number.
+                int clr = ((KillerSudoku) puzzle).regionColor[i][j]; //the color (regionColor) of the region we are now (grid[i][j]), represented by a number.
                 Color c;
                 switch (clr) {
-                    case 1:
+                    case 0:
                         c = Color.decode("#fffd98");
                         break;
-                    case 2:
+                    case 1:
                         c = Color.decode("#cfe799");
                         break;
-                    case 3:
+                    case 2:
                         c = Color.decode("#cbe8fa");
                         break;
-                    default:
+                    case 3:
                         c = Color.decode("#f8cfdf");
+                        break;
+                    default:
+                        c = lightGray;
                         break;
                 }
                 grid[i][j].setBackground(c); //colors depending on the region number
