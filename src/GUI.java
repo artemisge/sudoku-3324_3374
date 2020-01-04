@@ -32,6 +32,9 @@ public class GUI extends JFrame implements ActionListener
     protected Player player;
     protected SudokuPuzzle puzzle;
 
+    /**
+     * will initialize to anonymous player in the beginning and to a classic sudoku
+     */
     public GUI(ResourceBundle messages)
     {
         player = new Player(""); //anonymous player in the beginning
@@ -39,8 +42,11 @@ public class GUI extends JFrame implements ActionListener
         makeFrame(gameVersion,messages);
     }
 
-    //makes the main window for the game and the sudoku grid with the starter puzzle
-    private void makeFrame(int gameVersion,ResourceBundle messages)
+    /**
+     * makes the main window for the game and the sudoku grid with the starter puzzle (classic)
+     * @param gameType 0: classic, 1: killer, 2: duidoku
+     */
+    private void makeFrame(int gameType,ResourceBundle messages)
     {
         //code for the main frame
         setTitle("Sudoku");
@@ -54,8 +60,8 @@ public class GUI extends JFrame implements ActionListener
         //main panel, will contain two smaller
         game = new JPanel(new BorderLayout());
         userLabel = new JLabel(messages.getString("mainLabelNegative"));
-        createPuzzle(gameVersion);  // arxikopoiei to dimension kai ftiaxnei enan array stin metabliti puzzle.
-        createGamePanel(gameVersion,messages); //analoga me to gameVersion, tha exei diaforetiko layout to grid kai diaforetikes epiloges (px sto duidoku den exei ClearBox button)
+        createPuzzle(gameType);  // arxikopoiei to dimension kai ftiaxnei enan array stin metabliti puzzle.
+        createGamePanel(gameType,messages); //analoga me to gameVersion, tha exei diaforetiko layout to grid kai diaforetikes epiloges (px sto duidoku den exei ClearBox button)
 
         add(game);
         pack();
@@ -63,9 +69,12 @@ public class GUI extends JFrame implements ActionListener
 
     }
 
-    private void createGamePanel(int gameVersion,ResourceBundle messages) {
-        //panel inside the main panel for sudoku grid buttons, will be on the left
-        game.removeAll(); //in case for a new game, it clears everything
+    /**
+     * panel inside of the main panel for sudoku grid-puzzle buttons (on the left/west side) and number-buttons and checkboxes (on the right/east side)
+     * @param gameType 0: classic, 1: killer, 2: duidoku
+     */
+    private void createGamePanel(int gameType,ResourceBundle messages) {
+        game.removeAll(); //in case of a new game, it clears everything
 
         //a panel inside of the main panel for
         // the options, help check box and number buttons
@@ -74,11 +83,11 @@ public class GUI extends JFrame implements ActionListener
         eastPanel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
-        if (gameVersion == 0) { //classic
-            classicEastPanel(constraints,messages); //nai, dustuxos xreiazomaste ta constraints
-        } else if (gameVersion == 1) { //killer
+        if (gameType == 0) { //classic
+            classicEastPanel(constraints,messages);
+        } else if (gameType == 1) { //killer
             killerEastPanel(constraints,messages);
-        } else {
+        } else { //duidoku
             duidokuEastPanel(constraints,messages);
         }
 
@@ -117,8 +126,13 @@ public class GUI extends JFrame implements ActionListener
         game.revalidate(); //something like an update for the panel
     }
 
-    //these are the panels for each game Version. They need to be distinguished
-    // because each of them has different options and available buttons.
+
+    /**
+     * these are the panels for each game Type. They need to be distinguished
+     * because each of them has different options and available buttons.
+     * panel in normal type
+     * @param constraints
+     */
     private void classicEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
         clearAll = new JButton(messages.getString("ClearButton"));
         clearAll.addActionListener(this);
@@ -164,6 +178,10 @@ public class GUI extends JFrame implements ActionListener
         eastPanel.add(clearBox, constraints);
     }
 
+    /**
+     * panel in killer type
+     * @param constraints
+     */
     private void killerEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
 
         clearAll = new JButton(messages.getString("ClearButton"));
@@ -202,6 +220,10 @@ public class GUI extends JFrame implements ActionListener
         eastPanel.add(clearBox, constraints);
     }
 
+    /**
+     * panel in duidoku type
+     * @param constraints
+     */
     private void duidokuEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
         String  sText  = "<html>"+messages.getString("duidokuRules")+"</html>";
         JLabel duidokuLabel = new JLabel(sText);
@@ -217,7 +239,6 @@ public class GUI extends JFrame implements ActionListener
         constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.gridwidth = 9;
-        //constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridheight = 1;
         constraints.insets = new Insets(5, 5, 5, 5);
         eastPanel.add(wordoku, constraints);
@@ -244,9 +265,16 @@ public class GUI extends JFrame implements ActionListener
         }
     }
 
+    /**
+     * menu bar with Options:
+     * -New Game    -> Classic
+     *              -> Killer
+     *              -> Duidoku
+     * -Log in/ Sign Up
+     * -Statistics
+     */
     private void createMenuBar(ResourceBundle messages)
     {
-        //menu bar with the options
         JMenuBar menu=new JMenuBar();
 
 
@@ -324,9 +352,9 @@ public class GUI extends JFrame implements ActionListener
     }
 
 
-
-    //updates the whole grid, for example when there is a change
-    // in boolean variable letters (indicating wordoku) and the grid needs to change
+    /**
+     * in case of a change in the puzzle-grid, this one updates the grid-buttons.
+     */
     private void updateGrid(){
         for(int i = 0; i < puzzle.dimension; i++){
             for(int j = 0; j < puzzle.dimension; j++){
@@ -335,8 +363,15 @@ public class GUI extends JFrame implements ActionListener
         }
     }
 
-    //returns the equivalent char version of the number that is saved in grid[i][j]
-    //boolean letters is to add or not the ascii value to convert to letters. true for letters, false for numbers
+
+
+    /**
+     * returns the equivalent char version of the number that is saved in grid[i][j]
+     * boolean letters is to add or not the ascii value to convert to letters. true for letters, false for numbers
+     * @param button
+     * @param row
+     * @param col
+     */
     private void convertGridNumber(JButton button, int row, int col) {
         try {
             if ( puzzle.grid[row][col] == 0) {
@@ -368,66 +403,103 @@ public class GUI extends JFrame implements ActionListener
         }
     }
 
-    private void createPuzzle(int gameVersion)
-    {
-        if (gameVersion == 0) {
-            puzzle = new NormalSudoku(player.getNextUnsolvedPuzzle(0));
-        } else if (gameVersion == 1) {
-            puzzle = new KillerSudoku(player.getNextUnsolvedPuzzle(1));
+
+    private void createPuzzle(int gameType) {
+        switch (gameType) {
+            case 0:
+                puzzle = new NormalSudoku(player.getNextUnsolvedPuzzle(0));
+                break;
+            case 1:
+                puzzle = new KillerSudoku(player.getNextUnsolvedPuzzle(1));
+                break;
+            case 2:
+                puzzle = new Duidoku();
+                break;
+        }
+    }
+
+    /**
+     * colors all grid buttons with the default color (no help check box activated)
+     */
+    private void colorButtons() {
+        if (puzzle instanceof KillerSudoku) {
+            colorKiller();
+        } else if (puzzle instanceof NormalSudoku) {
+            colorNormal();
         } else {
-            puzzle = new Duidoku();
+            colorDuidoku();
         }
     }
 
-    private void colorButtons() { //colors all grid buttons with the default color (no help check box activated
-        if (puzzle instanceof KillerSudoku){ //killer sudoku coloring
-            //color sum regions differently
-            for (int i = 0; i < puzzle.dimension; i++) { //gia kathe cell sto grid
-                for (int j = 0; j < puzzle.dimension; j++) {
-                    int clr = ((KillerSudoku) puzzle).regionColor[((KillerSudoku) puzzle).regionIndex[i][j]]; //to xroma (regionColor) pou brisketai stin perioxi pou eimaste tora (grid[i][j]), anaparistatai se arithmo.
-                    Color c;
-                    switch (clr) {
-                        case 1:
-                            c = Color.decode("#fffd98");
-                            break;
-                        case 2:
-                            c = Color.decode("#cfe799");
-                            break;
-                        case 3:
-                            c = Color.decode("#cbe8fa");
-                            break;
-                        default:
-                            c = Color.decode("#f8cfdf");
-                            break;
-                    }
-                    grid[i][j].setBackground(c); //xromatizei analoga ton arithmo tis perioxis
+    /**
+     * colors Killer type
+     */
+    public void colorKiller() {
+        //colors sum-regions differently
+        for (int i = 0; i < puzzle.dimension; i++) { //for every cell in grid
+            for (int j = 0; j < puzzle.dimension; j++) {
+                int clr = ((KillerSudoku) puzzle).regionColor[((KillerSudoku) puzzle).regionIndex[i][j]]; //the color (regionColor) of the region we are now (grid[i][j]), represented by a number.
+                Color c;
+                switch (clr) {
+                    case 1:
+                        c = Color.decode("#fffd98");
+                        break;
+                    case 2:
+                        c = Color.decode("#cfe799");
+                        break;
+                    case 3:
+                        c = Color.decode("#cbe8fa");
+                        break;
+                    default:
+                        c = Color.decode("#f8cfdf");
+                        break;
                 }
-            }
-        } else { //normal and duidoku coloring
-            for (int i = 0; i < puzzle.dimension; i++) {
-                for (int j = 0; j < puzzle.dimension; j++) {
-                    grid[i][j].setBackground(Color.lightGray);
-                    if (puzzle.dimension == 9) {
-                        if ((((i)/(int)sqrt(puzzle.dimension)*(int)sqrt(puzzle.dimension) + j/(int)sqrt(puzzle.dimension)) % 2 == 1)) {
-                            grid[i][j].setBackground(white);
-                        }
-                    } else {  //an einai duidoku, oste na bgainoun xiasti ta xromata
-                        if ((((i)/(int)sqrt(puzzle.dimension)*(int)sqrt(puzzle.dimension) + j/(int)sqrt(puzzle.dimension)) % 3 == 0)) {
-                            grid[i][j].setBackground(white);
-                        }
-                    }
-                }
+                grid[i][j].setBackground(c); //colors depending on the region number
             }
         }
     }
 
-//    actionListener for grid buttons and help
-//  will use the variable clickedValue to assign a value to the grid
+    /**
+     * colors Normal type
+     */
+    public void colorNormal() {
+        for (int i = 0; i < puzzle.dimension; i++) {
+            for (int j = 0; j < puzzle.dimension; j++) {
+                grid[i][j].setBackground(Color.lightGray);
+                if ((((i)/(int)sqrt(puzzle.dimension)*(int)sqrt(puzzle.dimension) + j/(int)sqrt(puzzle.dimension)) % 2 == 1)) {
+                    grid[i][j].setBackground(white);
+                }
+            }
+        }
+    }
+
+    /**
+     * colors duidoku type
+     */
+    public void colorDuidoku() {
+        for (int i = 0; i < puzzle.dimension; i++) {
+            for (int j = 0; j < puzzle.dimension; j++) {
+                grid[i][j].setBackground(Color.lightGray);
+                if ((((i)/(int)sqrt(puzzle.dimension)*(int)sqrt(puzzle.dimension) + j/(int)sqrt(puzzle.dimension)) % 3 == 0)) {
+                    grid[i][j].setBackground(white);
+                }
+            }
+        }
+    }
+
+
+
+    /**
+     * ActionListener for puzzle-grid buttons, available number-buttons/clear-buttons, wordoku and help checkbox
+     * Will use the variable clickedValue when the user clicks at a specific available number-button to assign a value to the grid
+     * @param e
+     */
     public void actionPerformed(ActionEvent e) {
         JComponent src = (JComponent) e.getSource(); //JComponent is a super class of JButton and JCheckBox
 
         if (src == wordoku) {
             updateGrid();
+            wordokuNumbers();
         }
 
         if (!help.isSelected() && src == help) {
@@ -480,38 +552,12 @@ public class GUI extends JFrame implements ActionListener
                                 updateGrid();
 
                             }
-                            //an kapoios kerdisei to paixnidi!!!
+                            //if someone finishes the game
                             if (puzzle.isSolved()) {
-                                //pop-up
-                                if (puzzle instanceof NormalSudoku) {
-                                    JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you solved a Classic Sudoku. For a new game go to Options.");
-                                    player.addSolvedNormalPuzzle(puzzle.current);
-                                } else if (puzzle instanceof KillerSudoku) {
-                                    JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you solved a Killer Sudoku. For a new game go to Options.");
-                                    player.addSolvedKillerPuzzle(puzzle.current);
-                                } else { //duidoku
-                                    if (((Duidoku) puzzle).lastValidMove) {
-                                        JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you won the round! For a new game go to Options.");
-                                        player.addWin(); //player made the last valid move so he won
-                                    } else {
-                                        JOptionPane.showMessageDialog(getContentPane(), "Computer won the round. For a new game go to Options.");
-                                        player.addLoss(); //AI made the last valid move so user lost
-                                    }
-                                }
-                                player.updateFile();
+                               gameFinished();
                             }
                         } else {
-                            invalidLabel.setText("Invalid move");
-                            System.out.println("invalid move");
-                            Timer timer = new Timer();
-                            TimerTask task = new TimerTask() {
-                                @Override
-                                public void run() {
-                                    invalidLabel.setText(" ");
-                                }
-                            };
-                            timer.schedule(task, 2000);
-
+                            invalidMove();
                         }
                         if (help.isSelected()) {
                             helpFunction();
@@ -524,7 +570,64 @@ public class GUI extends JFrame implements ActionListener
 
     }
 
+    /**
+     * Label with a timer when the user makes an invalid move
+     */
+    private void invalidMove() {
+        invalidLabel.setText("Invalid move");
+        System.out.println("invalid move");
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                invalidLabel.setText(" ");
+            }
+        };
+        timer.schedule(task, 2000);
+    }
 
+    /**
+     * Pop up message with the game info
+     * updates file with the new stats
+     */
+    private void gameFinished() {
+        //pop-up
+        if (puzzle instanceof NormalSudoku) {
+            JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you solved a Classic Sudoku. For a new game go to Options.");
+            player.addSolvedNormalPuzzle(puzzle.current);
+        } else if (puzzle instanceof KillerSudoku) {
+            JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you solved a Killer Sudoku. For a new game go to Options.");
+            player.addSolvedKillerPuzzle(puzzle.current);
+        } else { //duidoku
+            if (((Duidoku) puzzle).lastValidMove) {
+                JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you won the round! For a new game go to Options.");
+                player.addWin(); //player made the last valid move so he won
+            } else {
+                JOptionPane.showMessageDialog(getContentPane(), "Computer won the round. For a new game go to Options.");
+                player.addLoss(); //AI made the last valid move so user lost
+            }
+        }
+        player.updateFile();
+    }
+
+    /**
+     * assigns new text to available nkber-buttons when wordoku is checked
+     */
+    private void wordokuNumbers() {
+        for (int i = 0; i < puzzle.dimension; i++) {
+            String d;
+            if (wordoku.isSelected()) {
+                d = Character.toString((char) (i + 'A'));
+            } else {
+                d = Integer.toString(i+1);
+            }
+            numbers[i].setText(d);
+        }
+    }
+
+    /**
+     * when help is checked, colors the cells where user can place the value he chose at the moment (clickedValue)
+     */
     private void helpFunction() { //help is enabled
         colorButtons();
         if (clickedValue != -1 && clickedValue != 0) {

@@ -12,6 +12,7 @@ public class NormalSudoku extends SudokuPuzzle {
         loadFromFile(numberOfGame);
     }
 
+
     @Override
     public void loadFromFile(int numberOfGame) {
         current = numberOfGame;
@@ -45,6 +46,10 @@ public class NormalSudoku extends SudokuPuzzle {
         }
     }
 
+    /**
+     * when a player clicks the clearAll button, the grid need to keep the original values.
+     * So, by using the array initialGrid, it clears all other cells that the user has inserted values.
+     */
     @Override
     public void reset() {
         for (int i = 0; i < dimension; i++) {
@@ -54,6 +59,13 @@ public class NormalSudoku extends SudokuPuzzle {
         }
     }
 
+    /**
+     * can insert is the same with super with the addition that it also checks if it is one of the original placed values in the grid, so it cannot be changed.
+     * @param row
+     * @param col
+     * @param value
+     * @return
+     */
     @Override
     public boolean canInsert(int row, int col, int value){
         boolean isInInitialGrid = true;

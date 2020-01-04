@@ -32,8 +32,11 @@ public class Player implements Serializable { //Serializable has to do with file
         return duidokuLosses;
     }
 
-    //even if the player remains anonymous (""), the game will save the puzzles he completed, but the data won't
-    // be saved after the program is closed. So if he continues playing, he won't encounter the same puzzles again.
+    /**
+     * even if the player remains anonymous (""), the game will keep temporarily the puzzles he completed, but the data won't
+     * be saved after the program is closed or the user signs with a different nickname. So if he continues playing, he won't encounter the same puzzles again.
+     * @param currentPuzzleNumber
+     */
     public void addSolvedNormalPuzzle(int currentPuzzleNumber) {
         solvedNormalPuzzles[currentPuzzleNumber] = 1;
     }
@@ -42,7 +45,11 @@ public class Player implements Serializable { //Serializable has to do with file
         solvedKillerPuzzles[currentPuzzleNumber] = 1;
     }
 
-
+    /**
+     * depending on the game type and which puzzles the player has already completed, will return the number of puzzle we need to read from file later
+     * @param gameType
+     * @return
+     */
     public int getNextUnsolvedPuzzle(int gameType)
     {
         int solvedPuzzles[];
@@ -76,6 +83,12 @@ public class Player implements Serializable { //Serializable has to do with file
         duidokuLosses++;
     }
 
+    /**
+     * Updates file only if the username is different from "".
+     * In that case, it makes an arrayList of class Player from file without the updates (or makes a blank one if the file doesn't exist)
+     * and in order to update the stats for the current player, it searches the arrayList and if/when it founds him, deletes the old version
+     * of him and then adds the new one. Afterwards it creates a new file and writes the arrayList of class Player, in a formatted way (implementing serializable).
+     */
     public void updateFile() {
 
         if (!name.equals("")) { //saved only if player has logged in or uses a nickname other than ""
@@ -109,6 +122,7 @@ public class Player implements Serializable { //Serializable has to do with file
         }
     }
 
+
     private  void initialize(String name) {
         this.name = name;
         //Everything in a Java program not explicitly set to something by the programmer, is initialized to a zero value.
@@ -118,6 +132,11 @@ public class Player implements Serializable { //Serializable has to do with file
         duidokuLosses = 0;
     }
 
+    /**
+     * while initializing the stats of the player in the beginning, then it parses through the file and creates a arrayList of Players and searches for the username.
+     * If it's found, it updates the stats, else it is a new player and it is already initialized.
+     * @param name
+     */
     public void readFromFile(String name) {
 
         initialize(name);

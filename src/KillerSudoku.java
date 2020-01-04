@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class KillerSudoku extends SudokuPuzzle {
 
-    protected int[][] regionIndex = new int[getDimension()][getDimension()];//kathe cell, se poia perioxi anikei.
+    protected int[][] regionIndex = new int[dimension][dimension];//kathe cell, se poia perioxi anikei.
     // ...px to 1o cell anikei stin perioxi 0
     protected int regionNum; //to plhthos ton perioxon pou uparxoun
     protected int[] regionSum; //pinakas me to sum pou exei h kathe perioxi
@@ -19,12 +19,25 @@ public class KillerSudoku extends SudokuPuzzle {
     }
 
 
+    /**
+     * taken the region of the cell the user wants to insert the value, it calculates the sum than
+     * needs to be in that region and compares it with the current sum.
+     * cellsFilled : filled number of cells in the same region
+     * totalCells : total number of cells in the same region
+     * region : in which region the cell is
+     * sum : sum of all cells in the same region up to now
+     * @param row
+     * @param col
+     * @param value
+     * @return it will return true if the current sum equals the needed sum and the region cells are all filled
+     * OR if the sum is less than the needed and the cells of the region aren't filled.
+     */
     public boolean isSumOk(int row, int col, int value){
         boolean ok = false;
-        int cellsFilled = 0; //filled number of cells in the same region
-        int totalCells = 0; //total number of cells in the same region
-        int region = regionIndex[row][col]; //in which region the cell is
-        int sum = 0; //sum of all cells in the same region up to now
+        int cellsFilled = 0;
+        int totalCells = 0;
+        int region = regionIndex[row][col];
+        int sum = 0;
         for (int i = 0; i < dimension; i++){
             for (int j = 0; j < dimension; j++){
                 if (regionIndex[i][j] == region){
@@ -39,43 +52,17 @@ public class KillerSudoku extends SudokuPuzzle {
         if ((sum + value == regionSum[region]) && (cellsFilled + 1 == totalCells)
                 || (sum + value < regionSum[region]) && (cellsFilled + 1 < totalCells)){
             ok = true;
-            //to athroisma einai teleio me ola ta kelia sumpliromena h ta kelia den exoun
-            //sumplirothei kai to athroisma tous den kseperna to apaitoumeno athroisma
         }
         return ok;
     }
 
-
-    public int[] getRegionSum() {
-        return regionSum;
-    }
-
-
-    public int getRegionNum(){
-        return regionNum;
-    }
-
-
-    private boolean isAllSumOk(){ //to check if game is finished
-        for (int i = 0; i < regionNum; i++){
-            //gia kathe perioxi
-            int sum =0;
-            for (int j = 0; j < dimension; j++){
-                for (int k = 0; k < dimension; k++){
-                    if (regionIndex[j][k] == i){
-                        sum += grid[j][k];
-                    }
-                }
-
-            }
-            if (sum != regionSum[i]){
-                return false;
-            }
-        }
-        return true;
-    }
-
-
+    /**
+     * Works the same as the super one but with the addition of checking if the the sum is ok in the specific region.
+     * @param row
+     * @param col
+     * @param value
+     * @return
+     */
     @Override
     public boolean canInsert(int row, int col, int value){
         return super.canInsert(row, col, value) && isSumOk(row, col, value);
@@ -95,15 +82,11 @@ public class KillerSudoku extends SudokuPuzzle {
                         int tmp = sc.nextInt();
                         if (numberOfGame == p) {
                             regionIndex[i][j] = tmp;
-                            //System.out.print(regionIndex[i][j] + "\t");
                         }
                         if (tmp > regionNum) {
                             regionNum = tmp;
                         }
                     }
-//                    if (numberOfGame == p) {
-//                        System.out.println();
-//                    }
                 }
                 regionNum++;
                 regionColor = new int[regionNum];
@@ -124,9 +107,28 @@ public class KillerSudoku extends SudokuPuzzle {
 
     }
 
+    /**
+     * checks if tha game is finished by checking if all needed sums in regions are ok.
+     * @return
+     */
     @Override
     public boolean isSolved() {
-        return super.isSolved() && isAllSumOk();
+        for (int i = 0; i < regionNum; i++){
+            //gia kathe perioxi
+            int sum =0;
+            for (int j = 0; j < dimension; j++){
+                for (int k = 0; k < dimension; k++){
+                    if (regionIndex[j][k] == i){
+                        sum += grid[j][k];
+                    }
+                }
+
+            }
+            if (sum != regionSum[i]){
+                return false;
+            }
+        }
+        return true;
     }
 
 }
