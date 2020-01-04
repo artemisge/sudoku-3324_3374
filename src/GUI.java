@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,15 +32,15 @@ public class GUI extends JFrame implements ActionListener
     protected Player player;
     protected SudokuPuzzle puzzle;
 
-    public GUI()
+    public GUI(ResourceBundle messages)
     {
         player = new Player(""); //anonymous player in the beginning
         int gameVersion = 0; //will initialize to a classic Sudoku
-        makeFrame(gameVersion);
+        makeFrame(gameVersion,messages);
     }
 
     //makes the main window for the game and the sudoku grid with the starter puzzle
-    private void makeFrame(int gameVersion)
+    private void makeFrame(int gameVersion,ResourceBundle messages)
     {
         //code for the main frame
         setTitle("Sudoku");
@@ -48,13 +49,13 @@ public class GUI extends JFrame implements ActionListener
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        createMenuBar();
+        createMenuBar(messages);
 
         //main panel, will contain two smaller
         game = new JPanel(new BorderLayout());
-        userLabel = new JLabel("You haven't logged in, your stats won't be saved");
+        userLabel = new JLabel(messages.getString("mainLabelNegative"));
         createPuzzle(gameVersion);  // arxikopoiei to dimension kai ftiaxnei enan array stin metabliti puzzle.
-        createGamePanel(gameVersion); //analoga me to gameVersion, tha exei diaforetiko layout to grid kai diaforetikes epiloges (px sto duidoku den exei ClearBox button)
+        createGamePanel(gameVersion,messages); //analoga me to gameVersion, tha exei diaforetiko layout to grid kai diaforetikes epiloges (px sto duidoku den exei ClearBox button)
 
         add(game);
         pack();
@@ -62,7 +63,7 @@ public class GUI extends JFrame implements ActionListener
 
     }
 
-    private void createGamePanel(int gameVersion) {
+    private void createGamePanel(int gameVersion,ResourceBundle messages) {
         //panel inside the main panel for sudoku grid buttons, will be on the left
         game.removeAll(); //in case for a new game, it clears everything
 
@@ -74,11 +75,11 @@ public class GUI extends JFrame implements ActionListener
         GridBagConstraints constraints = new GridBagConstraints();
 
         if (gameVersion == 0) { //classic
-            classicEastPanel(constraints); //nai, dustuxos xreiazomaste ta constraints
+            classicEastPanel(constraints,messages); //nai, dustuxos xreiazomaste ta constraints
         } else if (gameVersion == 1) { //killer
-            killerEastPanel(constraints);
+            killerEastPanel(constraints,messages);
         } else {
-            duidokuEastPanel(constraints);
+            duidokuEastPanel(constraints,messages);
         }
 
         constraints.insets = new Insets(50, 5, 5, 5);
@@ -118,8 +119,8 @@ public class GUI extends JFrame implements ActionListener
 
     //these are the panels for each game Version. They need to be distinguished
     // because each of them has different options and available buttons.
-    private void classicEastPanel(GridBagConstraints constraints) {
-        clearAll = new JButton("Clear All");
+    private void classicEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
+        clearAll = new JButton(messages.getString("ClearButton"));
         clearAll.addActionListener(this);
         constraints.gridx = 3;
         constraints.gridy = 0;
@@ -127,7 +128,7 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 50, 5);
         eastPanel.add(clearAll, constraints);
 
-        wordoku = new JCheckBox("Wordoku");
+        wordoku = new JCheckBox(messages.getString("wordoku"));
         wordoku.addActionListener(this);
         constraints.gridx = 3;
         constraints.gridy = 3;
@@ -135,7 +136,7 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 5, 5);
         eastPanel.add(wordoku, constraints);
 
-        help = new JCheckBox("Help");
+        help = new JCheckBox(messages.getString("help"));
         help.addActionListener(this);
         constraints.gridx = 3;
         constraints.gridy = 4;
@@ -155,7 +156,7 @@ public class GUI extends JFrame implements ActionListener
         }
 
         constraints.insets = new Insets(5, 5, 5, 5);
-        clearBox = new JButton("Clear Box");
+        clearBox = new JButton(messages.getString("clearBox"));
         clearBox.addActionListener(this);
         constraints.gridx = 3;
         constraints.gridy = 7;
@@ -163,9 +164,9 @@ public class GUI extends JFrame implements ActionListener
         eastPanel.add(clearBox, constraints);
     }
 
-    private void killerEastPanel(GridBagConstraints constraints) {
+    private void killerEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
 
-        clearAll = new JButton("Clear All");
+        clearAll = new JButton(messages.getString("ClearButton"));
         clearAll.addActionListener(this);
         constraints.gridx = 3;
         constraints.gridy = 0;
@@ -173,7 +174,7 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 50, 5);
         eastPanel.add(clearAll, constraints);
 
-        help = new JCheckBox("Help");
+        help = new JCheckBox(messages.getString("help"));
         help.addActionListener(this);
         constraints.gridx = 3;
         constraints.gridy = 4;
@@ -193,7 +194,7 @@ public class GUI extends JFrame implements ActionListener
         }
 
         constraints.insets = new Insets(5, 5, 5, 5);
-        clearBox = new JButton("Clear Box");
+        clearBox = new JButton(messages.getString("clearBox"));
         clearBox.addActionListener(this);
         constraints.gridx = 3;
         constraints.gridy = 7;
@@ -201,8 +202,8 @@ public class GUI extends JFrame implements ActionListener
         eastPanel.add(clearBox, constraints);
     }
 
-    private void duidokuEastPanel(GridBagConstraints constraints) {
-        String  sText  = "<html>Win your opponent by making <br> the last valid move on the game.</html>";
+    private void duidokuEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
+        String  sText  = "<html>"+messages.getString("duidokuRules")+"</html>";
         JLabel duidokuLabel = new JLabel(sText);
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -211,7 +212,7 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 50, 5);
         eastPanel.add(duidokuLabel, constraints);
 
-        wordoku = new JCheckBox("Wordoku");
+        wordoku = new JCheckBox(messages.getString("wordoku"));
         wordoku.addActionListener(this);
         constraints.gridx = 0;
         constraints.gridy = 3;
@@ -221,7 +222,7 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 5, 5);
         eastPanel.add(wordoku, constraints);
 
-        help = new JCheckBox("Help");
+        help = new JCheckBox(messages.getString("help"));
         help.addActionListener(this);
         constraints.gridx = 0;
         constraints.gridy = 4;
@@ -243,41 +244,41 @@ public class GUI extends JFrame implements ActionListener
         }
     }
 
-    private void createMenuBar()
+    private void createMenuBar(ResourceBundle messages)
     {
         //menu bar with the options
         JMenuBar menu=new JMenuBar();
 
 
-        JMenu menuOptions=new JMenu("Options");
+        JMenu menuOptions=new JMenu(messages.getString("options"));
         menuOptions.setMnemonic(KeyEvent.VK_A);
         menuOptions.setDisplayedMnemonicIndex(0);
         menu.add(menuOptions);
 
         //dropdown menu for the new game options
-        JMenu newGame =new JMenu("New Game");
-        JMenuItem classic=new JMenuItem("Classic");
+        JMenu newGame =new JMenu(messages.getString("newGame"));
+        JMenuItem classic=new JMenuItem(messages.getString("classic"));
         classic.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(0);
-                createGamePanel(0);
+                createGamePanel(0,messages);
             }
         });
-        JMenuItem killer=new JMenuItem("Killer");
+        JMenuItem killer=new JMenuItem(messages.getString("killer"));
         killer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(1);
-                createGamePanel(1);
+                createGamePanel(1,messages);
             }
         });
-        JMenuItem duidoku=new JMenuItem("Duidoku");
+        JMenuItem duidoku=new JMenuItem(messages.getString("duidoku"));
         duidoku.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(2);
-                createGamePanel(2);
+                createGamePanel(2,messages);
             }
         });
         newGame.add(classic);
