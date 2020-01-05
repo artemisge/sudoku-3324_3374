@@ -1,5 +1,6 @@
 import javafx.scene.shape.Line;
 
+import javax.annotation.Resource;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
@@ -28,6 +29,7 @@ public class GUI extends JFrame implements ActionListener
     private JLabel invalidLabel;
     private JCheckBox help;
     private JCheckBox wordoku;
+    private ResourceBundle messages;
 
     protected Player player;
     protected SudokuPuzzle puzzle;
@@ -39,14 +41,15 @@ public class GUI extends JFrame implements ActionListener
     {
         player = new Player(""); //anonymous player in the beginning
         int gameVersion = 0; //will initialize to a classic Sudoku
-        makeFrame(gameVersion,messages);
+        this.messages=messages;
+        makeFrame(gameVersion);
     }
 
     /**
      * makes the main window for the game and the sudoku grid with the starter puzzle (classic)
      * @param gameType 0: classic, 1: killer, 2: duidoku
      */
-    private void makeFrame(int gameType,ResourceBundle messages)
+    private void makeFrame(int gameType)
     {
         //code for the main frame
         setTitle("Sudoku");
@@ -55,13 +58,13 @@ public class GUI extends JFrame implements ActionListener
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        createMenuBar(messages);
+        createMenuBar();
 
         //main panel, will contain two smaller
         game = new JPanel(new BorderLayout());
         userLabel = new JLabel(messages.getString("mainLabelNegative"));
         createPuzzle(gameType);  // arxikopoiei to dimension kai ftiaxnei enan array stin metabliti puzzle.
-        createGamePanel(gameType,messages); //analoga me to gameVersion, tha exei diaforetiko layout to grid kai diaforetikes epiloges (px sto duidoku den exei ClearBox button)
+        createGamePanel(gameType); //analoga me to gameVersion, tha exei diaforetiko layout to grid kai diaforetikes epiloges (px sto duidoku den exei ClearBox button)
 
         add(game);
         pack();
@@ -73,7 +76,7 @@ public class GUI extends JFrame implements ActionListener
      * panel inside of the main panel for sudoku grid-puzzle buttons (on the left/west side) and number-buttons and checkboxes (on the right/east side)
      * @param gameType 0: classic, 1: killer, 2: duidoku
      */
-    private void createGamePanel(int gameType,ResourceBundle messages) {
+    private void createGamePanel(int gameType) {
         game.removeAll(); //in case of a new game, it clears everything
 
         //a panel inside of the main panel for
@@ -84,11 +87,11 @@ public class GUI extends JFrame implements ActionListener
         GridBagConstraints constraints = new GridBagConstraints();
 
         if (gameType == 0) { //classic
-            classicEastPanel(constraints,messages);
+            classicEastPanel(constraints);
         } else if (gameType == 1) { //killer
-            killerEastPanel(constraints,messages);
+            killerEastPanel(constraints);
         } else { //duidoku
-            duidokuEastPanel(constraints,messages);
+            duidokuEastPanel(constraints);
         }
 
         constraints.insets = new Insets(50, 5, 5, 5);
@@ -133,7 +136,7 @@ public class GUI extends JFrame implements ActionListener
      * panel in normal type
      * @param constraints
      */
-    private void classicEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
+    private void classicEastPanel(GridBagConstraints constraints) {
         clearAll = new JButton(messages.getString("ClearButton"));
         clearAll.addActionListener(this);
         constraints.gridx = 3;
@@ -182,7 +185,7 @@ public class GUI extends JFrame implements ActionListener
      * panel in killer type
      * @param constraints
      */
-    private void killerEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
+    private void killerEastPanel(GridBagConstraints constraints) {
 
         clearAll = new JButton(messages.getString("ClearButton"));
         clearAll.addActionListener(this);
@@ -224,7 +227,7 @@ public class GUI extends JFrame implements ActionListener
      * panel in duidoku type
      * @param constraints
      */
-    private void duidokuEastPanel(GridBagConstraints constraints, ResourceBundle messages) {
+    private void duidokuEastPanel(GridBagConstraints constraints) {
         String  sText  = "<html>"+messages.getString("duidokuRules")+"</html>";
         JLabel duidokuLabel = new JLabel(sText);
         constraints.gridx = 0;
@@ -273,7 +276,7 @@ public class GUI extends JFrame implements ActionListener
      * -Log in/ Sign Up
      * -Statistics
      */
-    private void createMenuBar(ResourceBundle messages)
+    private void createMenuBar()
     {
         JMenuBar menu=new JMenuBar();
 
@@ -290,7 +293,7 @@ public class GUI extends JFrame implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(0);
-                createGamePanel(0,messages);
+                createGamePanel(0);
             }
         });
         JMenuItem killer=new JMenuItem(messages.getString("killer"));
@@ -298,7 +301,7 @@ public class GUI extends JFrame implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(1);
-                createGamePanel(1,messages);
+                createGamePanel(1);
             }
         });
         JMenuItem duidoku=new JMenuItem(messages.getString("duidoku"));
@@ -306,7 +309,7 @@ public class GUI extends JFrame implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e) {
                 createPuzzle(2);
-                createGamePanel(2,messages);
+                createGamePanel(2);
             }
         });
         newGame.add(classic);
@@ -317,7 +320,7 @@ public class GUI extends JFrame implements ActionListener
         menuOptions.addSeparator();
 
         //Log in option in menu bar
-        JMenuItem logIn=new JMenuItem("Log in/Sign up");
+        JMenuItem logIn=new JMenuItem(messages.getString("login"));
         logIn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -326,23 +329,23 @@ public class GUI extends JFrame implements ActionListener
                     player.readFromFile(username);
                     player.updateFile();
                     if (!username.equals("")) {
-                        userLabel.setText("You are logged in as " + player.getName());
+                        userLabel.setText(messages.getString("mainLabelPositive") + player.getName());
                     } else {
-                        userLabel.setText("You haven't logged in, your stats won't be saved");
+                        userLabel.setText(messages.getString("mainLabelNegative"));
                     }
                 }
             }
         });
         menuOptions.add(logIn);
 
-        JMenuItem stats=new JMenuItem("Statistics");
+        JMenuItem stats=new JMenuItem(messages.getString("statistics"));
         stats.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                if (player.getName().equals("")) {
-                   JOptionPane.showMessageDialog(getContentPane(), "You haven't logged in yet");
+                   JOptionPane.showMessageDialog(getContentPane(), messages.getString("notLoggedIn"));
                } else {
-                    JOptionPane.showMessageDialog(getContentPane(), "Duidoku Wins: " + player.getWins() + "\nDuidoku Losses: " + player.getLosses());
+                    JOptionPane.showMessageDialog(getContentPane(), messages.getString("duidokuWins") + player.getWins() + messages.getString("duidokuLosses") + player.getLosses());
                }
             }
         });
@@ -488,7 +491,6 @@ public class GUI extends JFrame implements ActionListener
     }
 
 
-
     /**
      * ActionListener for puzzle-grid buttons, available number-buttons/clear-buttons, wordoku and help checkbox
      * Will use the variable clickedValue when the user clicks at a specific available number-button to assign a value to the grid
@@ -574,7 +576,7 @@ public class GUI extends JFrame implements ActionListener
      * Label with a timer when the user makes an invalid move
      */
     private void invalidMove() {
-        invalidLabel.setText("Invalid move");
+        invalidLabel.setText(messages.getString("invalid"));
         System.out.println("invalid move");
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
@@ -593,17 +595,17 @@ public class GUI extends JFrame implements ActionListener
     private void gameFinished() {
         //pop-up
         if (puzzle instanceof NormalSudoku) {
-            JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you solved a Classic Sudoku. For a new game go to Options.");
+            JOptionPane.showMessageDialog(getContentPane(), messages.getString("normalWin"));
             player.addSolvedNormalPuzzle(puzzle.current);
         } else if (puzzle instanceof KillerSudoku) {
-            JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you solved a Killer Sudoku. For a new game go to Options.");
+            JOptionPane.showMessageDialog(getContentPane(), messages.getString("killerWin"));
             player.addSolvedKillerPuzzle(puzzle.current);
         } else { //duidoku
             if (((Duidoku) puzzle).lastValidMove) {
-                JOptionPane.showMessageDialog(getContentPane(), "Congratulations, you won the round! For a new game go to Options.");
+                JOptionPane.showMessageDialog(getContentPane(), messages.getString("duidokuWin"));
                 player.addWin(); //player made the last valid move so he won
             } else {
-                JOptionPane.showMessageDialog(getContentPane(), "Computer won the round. For a new game go to Options.");
+                JOptionPane.showMessageDialog(getContentPane(), messages.getString("duidokuLoss"));
                 player.addLoss(); //AI made the last valid move so user lost
             }
         }

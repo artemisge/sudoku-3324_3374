@@ -1,28 +1,16 @@
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.text.Normalizer;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args)
     {
-        String language;
-        String country;
-
-        if(args.length!=2)
-        {
-            language=new String("el");
-            country=new String("GR");
-        }else
-        {
-            language=new String(args[0]);
-            country=new String(args[1]);
-        }
-
-        Locale currentLocale;
+        Locale currentLocale=Locale.getDefault();
         ResourceBundle messages;
+        System.out.println(currentLocale.getLanguage());
+        messages = ResourceBundle.getBundle("MessagesBundle", currentLocale);
 
-        currentLocale=new Locale(language,country);
-
-        messages=ResourceBundle.getBundle("MessagesBundle", currentLocale);
         System.out.println(messages.getString("mainLabelNegative"));
 
         GUI myGui=new GUI(messages);
