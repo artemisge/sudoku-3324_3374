@@ -32,6 +32,16 @@ public class Player implements Serializable { //Serializable has to do with file
         return duidokuLosses;
     }
 
+   //used for testing
+    public int getSolvedNormalPuzzle(int index) {
+        return solvedNormalPuzzles[index];
+    }
+
+   //used for testing
+    public int getSolvedKillerPuzzle(int index) {
+        return solvedKillerPuzzles[index];
+    }
+
     /**
      * even if the player remains anonymous (""), the game will keep temporarily the puzzles he completed, but the data won't
      * be saved after the program is closed or the user signs with a different nickname. So if he continues playing, he won't encounter the same puzzles again.
@@ -123,7 +133,7 @@ public class Player implements Serializable { //Serializable has to do with file
     }
 
 
-    private  void initialize(String name) {
+    public void initialize(String name) {
         this.name = name;
         //Everything in a Java program not explicitly set to something by the programmer, is initialized to a zero value.
         solvedNormalPuzzles=new int[10];
