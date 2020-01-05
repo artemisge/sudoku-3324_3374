@@ -1,6 +1,6 @@
 import javafx.scene.shape.Line;
 
-import javax.annotation.Resource;
+//import javax.annotation.Resource;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;

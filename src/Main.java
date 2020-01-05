@@ -8,7 +8,6 @@ public class Main {
     {
         Locale currentLocale=Locale.getDefault();
         ResourceBundle messages;
-        System.out.println(currentLocale.getLanguage());
         messages = ResourceBundle.getBundle("MessagesBundle", currentLocale);
 
         System.out.println(messages.getString("mainLabelNegative"));
