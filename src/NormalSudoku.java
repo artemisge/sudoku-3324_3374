@@ -12,7 +12,6 @@ public class NormalSudoku extends SudokuPuzzle {
         loadFromFile(numberOfGame);
     }
 
-
     @Override
     public void loadFromFile(int numberOfGame) {
         current = numberOfGame;

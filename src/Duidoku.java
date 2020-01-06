@@ -18,7 +18,7 @@ public class Duidoku extends SudokuPuzzle {
 
 
     /**
-     * AI that makes a move. It checks the grid cell bu cell and inserts he first value it can.
+     * AI that makes a move. It checks the grid cell by cell and inserts the first value it can.
      * It updates the variable lastValidMove so that the computer made the last move.
      */
     public void AI() {
