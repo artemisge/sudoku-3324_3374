@@ -12,6 +12,7 @@ public class Main {
     public static void main(String[] args)
     {
         Locale currentLocale=Locale.getDefault();
+        System.out.println(currentLocale.getDisplayLanguage());
         ResourceBundle messages;
         messages = ResourceBundle.getBundle("MessagesBundle", currentLocale);
 

@@ -139,9 +139,9 @@ public class GUI extends JFrame implements ActionListener
     private void classicEastPanel(GridBagConstraints constraints) {
         clearAll = new JButton(messages.getString("ClearButton"));
         clearAll.addActionListener(this);
-        constraints.gridx = 3;
+        constraints.gridx = 2;
         constraints.gridy = 0;
-        constraints.gridwidth = 3;
+        constraints.gridwidth = 5;
         constraints.insets = new Insets(5, 5, 50, 5);
         eastPanel.add(clearAll, constraints);
 
@@ -175,9 +175,9 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 5, 5);
         clearBox = new JButton(messages.getString("clearBox"));
         clearBox.addActionListener(this);
-        constraints.gridx = 3;
-        constraints.gridy = 7;
-        constraints.gridwidth = 3;
+        constraints.gridx = 2;
+        constraints.gridy = 8;
+        constraints.gridwidth = 5;
         eastPanel.add(clearBox, constraints);
     }
 
@@ -189,9 +189,9 @@ public class GUI extends JFrame implements ActionListener
 
         clearAll = new JButton(messages.getString("ClearButton"));
         clearAll.addActionListener(this);
-        constraints.gridx = 3;
+        constraints.gridx = 2;
         constraints.gridy = 0;
-        constraints.gridwidth = 3;
+        constraints.gridwidth = 5;
         constraints.insets = new Insets(5, 5, 50, 5);
         eastPanel.add(clearAll, constraints);
 
@@ -217,9 +217,9 @@ public class GUI extends JFrame implements ActionListener
         constraints.insets = new Insets(5, 5, 5, 5);
         clearBox = new JButton(messages.getString("clearBox"));
         clearBox.addActionListener(this);
-        constraints.gridx = 3;
-        constraints.gridy = 7;
-        constraints.gridwidth = 3;
+        constraints.gridx = 2;
+        constraints.gridy = 8;
+        constraints.gridwidth = 5;
         eastPanel.add(clearBox, constraints);
     }
 
