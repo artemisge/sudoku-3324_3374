@@ -163,13 +163,6 @@ public class KillerSudoku extends SudokuPuzzle {
         }
     }
 
-    /**
-     * taken the regions, calculates the color for each region
-     */
-    private void colorArray() {
-
-    }
-
     private int max(int[][] regionIndex) {
         int max = 0;
         for (int i = 0; i < dimension; i++) {

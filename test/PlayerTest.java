@@ -62,9 +62,21 @@ public class PlayerTest {
 
     @Test
     public void updateFile() {
-//        Player p = new Player("test");
-//        p.addWin();
-//        assertEquals(1, p.getWins());
+        Player p =  new Player("");
+        p.addWin();
+        p.updateFile();
+        p = new Player("");
+        p.readFromFile("");
+        assertEquals("", p.getName());
+        assertEquals(0, p.getWins());
+
+        p =  new Player("test");
+        p.addWin();
+        p.updateFile();
+        p = new Player("test");
+        p.readFromFile("test");
+        assertEquals("test", p.getName());
+        assertEquals(1, p.getWins());
     }
 
     @Test
@@ -81,6 +93,13 @@ public class PlayerTest {
 
     @Test
     public void readFromFile() {
+        Player p =  new Player("test");
+        p.addWin();
+        p.updateFile();
+        p = new Player("test");
+        p.readFromFile("test");
+        assertEquals("test", p.getName());
+        assertEquals(1, p.getWins());
 
     }
 }
